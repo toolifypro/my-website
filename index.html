@@ -2,207 +2,75 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate God Calculator</title>
+<title>ToolifyPro - Free Tools</title>
 
 <style>
-:root {
-    --bg:#0f172a;
-    --card:rgba(30,41,59,0.7);
-    --text:#fff;
-    --primary:#6366f1;
-}
-.light {
-    --bg:#f1f5f9;
-    --card:#ffffff;
-    --text:#000;
-}
 body{
     margin:0;
-    font-family:system-ui;
-    background:var(--bg);
-    color:var(--text);
+    font-family:Arial;
+    background:linear-gradient(135deg,#0f172a,#1e293b);
+    color:white;
+    text-align:center;
+}
+
+h1{
+    margin-top:40px;
+    font-size:40px;
+}
+
+p{
+    color:#94a3b8;
+}
+
+.container{
     display:flex;
     justify-content:center;
-    align-items:center;
-    height:100vh;
+    gap:20px;
+    margin-top:50px;
+    flex-wrap:wrap;
 }
-.container{
-    display:grid;
-    grid-template-columns:350px 260px;
-    gap:15px;
-    padding:20px;
-    background:var(--card);
-    backdrop-filter:blur(15px);
-    border-radius:20px;
-}
-.display{
-    grid-column:span 2;
-    text-align:right;
-    padding:15px;
-    font-size:2.5rem;
-    background:#0003;
-    border-radius:10px;
-}
-button{
-    padding:15px;
-    border:none;
-    border-radius:10px;
-    background:#ffffff10;
-    color:inherit;
+
+.card{
+    background:#1e293b;
+    padding:30px;
+    border-radius:15px;
+    width:200px;
     cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 0 10px rgba(0,0,0,0.5);
 }
-button:hover{transform:scale(1.05);}
-.grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:8px;
+
+.card:hover{
+    transform:scale(1.1);
+    background:#334155;
 }
-.side{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-.history{
-    max-height:120px;
-    overflow:auto;
-    font-size:12px;
+
+.icon{
+    font-size:40px;
+    margin-bottom:10px;
 }
 </style>
 </head>
 
 <body>
 
+<h1>🚀 ToolifyPro</h1>
+<p>Free Online Tools for Everyone</p>
+
 <div class="container">
 
-<div id="display" class="display">0</div>
-
-<div class="grid">
-<button onclick="clearAll()">AC</button>
-<button onclick="memory('add')">M+</button>
-<button onclick="memory('sub')">M-</button>
-<button onclick="memory('recall')">MR</button>
-
-<button onclick="append('7')">7</button>
-<button onclick="append('8')">8</button>
-<button onclick="append('9')">9</button>
-<button onclick="append('/')">÷</button>
-
-<button onclick="append('4')">4</button>
-<button onclick="append('5')">5</button>
-<button onclick="append('6')">6</button>
-<button onclick="append('*')">×</button>
-
-<button onclick="append('1')">1</button>
-<button onclick="append('2')">2</button>
-<button onclick="append('3')">3</button>
-<button onclick="append('-')">−</button>
-
-<button onclick="append('0')">0</button>
-<button onclick="append('.')">.</button>
-<button onclick="calculate()">=</button>
-<button onclick="append('+')">+</button>
-</div>
-
-<div class="side">
-<button onclick="theme()">🌗 Theme</button>
-<button onclick="voice()">🎤 Voice</button>
-
-<div>Scientific</div>
-<button onclick="sci('sin')">sin</button>
-<button onclick="sci('cos')">cos</button>
-<button onclick="sci('sqrt')">√</button>
-<button onclick="sci('log')">log</button>
-
-<div>History</div>
-<div id="history" class="history"></div>
+<div class="card" onclick="openTool('calculator.html')">
+<div class="icon">🧮</div>
+<h3>Calculator</h3>
+<p>Advanced Calculator Tool</p>
 </div>
 
 </div>
 
 <script>
-let display=document.getElementById("display");
-let historyBox=document.getElementById("history");
-
-let input="0";
-let memoryVal=0;
-
-function update(){display.innerText=input;}
-
-function append(val){
-    if(input==="0") input=val;
-    else input+=val;
-    update();
+function openTool(page){
+    window.location.href=page;
 }
-
-function clearAll(){
-    input="0"; update();
-}
-
-function calculate(){
-    try{
-        let res=eval(input);
-        addHistory(input+" = "+res);
-        input=res.toString();
-        update();
-    }catch{
-        input="Error"; update();
-        setTimeout(clearAll,1000);
-    }
-}
-
-function sci(type){
-    let val=parseFloat(input);
-    if(type==="sin") input=Math.sin(val);
-    if(type==="cos") input=Math.cos(val);
-    if(type==="sqrt") input=Math.sqrt(val);
-    if(type==="log") input=Math.log10(val);
-    update();
-}
-
-function addHistory(text){
-    let h=JSON.parse(localStorage.getItem("hist")||"[]");
-    h.unshift(text);
-    localStorage.setItem("hist",JSON.stringify(h));
-    renderHistory();
-}
-
-function renderHistory(){
-    let h=JSON.parse(localStorage.getItem("hist")||"[]");
-    historyBox.innerHTML=h.slice(0,8).map(x=>`<div>${x}</div>`).join("");
-}
-renderHistory();
-
-function memory(type){
-    let val=parseFloat(input);
-    if(type==="add") memoryVal+=val;
-    if(type==="sub") memoryVal-=val;
-    if(type==="recall"){ input=memoryVal.toString(); update(); }
-}
-
-function theme(){
-    document.body.classList.toggle("light");
-}
-
-function voice(){
-    let Speech=window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(!Speech){alert("No voice support");return;}
-    let rec=new Speech();
-    rec.onresult=(e)=>{
-        let t=e.results[0][0].transcript;
-        t=t.replace(/plus/g,'+').replace(/minus/g,'-').replace(/times/g,'*').replace(/divide/g,'/');
-        input=t.replace(/[^0-9+\-*/.]/g,'');
-        calculate();
-    };
-    rec.start();
-}
-
-/* Keyboard */
-document.addEventListener("keydown",e=>{
-    if(!isNaN(e.key)||"+-*/.".includes(e.key)) append(e.key);
-    if(e.key==="Enter") calculate();
-    if(e.key==="Backspace") input=input.slice(0,-1)||"0",update();
-});
 </script>
 
 </body>
