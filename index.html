@@ -3,72 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToolifyPro | Ultimate Tools Hub</title>
-    
+    <title>ToolifyPro | Ultimate Nexus Tools Hub</title>
     <link rel="icon" type="image/png" href="https://i.ibb.co/3s3XmXh/Toolify-Pro-Iconic-T.png">
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <style>
-        /* ... existing styles ... */
-    </style>
-</head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToolifyPro | Ultimate Tools Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #020617;
-            --card: rgba(255, 255, 255, 0.04);
-            --border: rgba(255, 255, 255, 0.08);
-            --text: #fff;
-            --dim: #94a3b8;
             --primary: #6366f1;
+            --secondary: #a855f7;
+            --bg: #030712;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
 
         body {
-            background: radial-gradient(circle at 20% 30%, #1e1b4b, transparent),
-                        radial-gradient(circle at 80% 70%, #312e81, transparent),
-                        var(--bg);
-            color: var(--text);
+            background-color: var(--bg);
+            color: var(--text-main);
             min-height: 100vh;
+            overflow-x: hidden;
+            background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 40%),
+                        var(--bg);
         }
 
         /* HEADER */
         header {
-            position: sticky;
-            top: 0;
+            padding: 1.5rem 8%;
             display: flex;
             justify-content: space-between;
-            padding: 20px 8%;
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border);
-            z-index: 100;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--glass-border);
         }
 
-        .logo {
+        .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        
+        /* GEMINI'S BRANDING: EMBEDDED LOGO */
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-weight: 800;
+            color: white;
+            font-size: 1.1rem;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .logo-text {
             font-size: 1.5rem;
+            font-weight: 800;
             background: linear-gradient(to right, #6366f1, #a855f7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
         }
 
         /* HERO */
-        .hero { text-align: center; padding: 80px 10% 40px 10%; }
-        .hero h1 { font-size: 3rem; margin-bottom: 10px; font-weight: 800; letter-spacing: -1px; }
-        .hero p { color: var(--dim); font-size: 1.1rem; }
+        .hero { text-align: center; padding: 100px 10% 60px; }
+        .hero h1 { font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 800; line-height: 1.1; margin-bottom: 20px; letter-spacing: -2px; }
+        .hero p { color: var(--text-dim); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
 
         /* SEARCH */
-        .search-box { margin-top: 30px; }
+        .search-box { margin-top: 30px; position: relative; max-width: 400px; margin-left: auto; margin-right: auto; }
         .search-box input {
-            padding: 15px 25px;
+            padding: 16px 25px;
             width: 100%;
-            max-width: 400px;
             border-radius: 50px;
-            border: 1px solid var(--border);
+            border: 1px solid var(--glass-border);
             background: rgba(255, 255, 255, 0.05);
             color: white;
             outline: none;
@@ -82,115 +94,118 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
-            padding: 40px 10%;
-            max-width: 1200px;
+            padding: 40px 10% 100px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         /* CARD */
         .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 40px 30px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
             border-radius: 24px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-align: center;
+            padding: 40px 30px;
             text-decoration: none;
             color: inherit;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: block;
+            position: relative;
+            overflow: hidden;
         }
 
         .card:hover {
             transform: translateY(-12px);
-            background: rgba(255, 255, 255, 0.07);
+            background: rgba(255, 255, 255, 0.05);
             border-color: var(--primary);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
-        .card .icon { font-size: 3rem; margin-bottom: 20px; display: block; }
-        .card h3 { font-size: 1.3rem; margin-bottom: 10px; font-weight: 700; }
-        .card p { color: var(--dim); font-size: 0.9rem; line-height: 1.5; }
-
-        /* STATS */
-        .stats { margin-top: 20px; color: var(--dim); font-size: 0.9rem; font-weight: 500; }
-        #toolCount { color: var(--primary); font-weight: 800; }
+        .icon { font-size: 3rem; margin-bottom: 20px; display: block; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .card h3 { font-size: 1.3rem; margin-bottom: 12px; font-weight: 700; }
+        .card p { color: var(--text-dim); font-size: 0.95rem; line-height: 1.6; }
 
         /* FOOTER */
         footer {
             text-align: center;
-            padding: 60px 20px;
-            color: var(--dim);
+            padding: 50px 20px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-dim);
             font-size: 0.9rem;
-            border-top: 1px solid var(--border);
             margin-top: 40px;
         }
 
-        @media(max-width:600px) {
-            .hero h1 { font-size: 2.2rem; }
-            .grid { padding: 20px 5%; }
+        @media (max-width: 768px) {
+            header { padding: 1rem 5%; }
+            .hero { padding: 60px 5% 40px; }
+            .grid { padding: 20px 5% 60px; }
         }
     </style>
 </head>
-
 <body>
 
     <header>
-        <div class="logo">ToolifyPro</div>
-        <div style="color: var(--dim); font-weight: 600; font-size: 0.8rem; letter-spacing: 1px;">🚀 v2.0</div>
+        <a href="index.html" class="logo-container">
+            <div class="brand-icon">T</div>
+            <div class="logo-text">ToolifyPro</div>
+        </a>
+        <div style="font-size: 0.8rem; color: var(--text-dim); font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">🚀 v2.0</div>
     </header>
 
     <section class="hero">
         <h1>All Tools in One Place ⚡</h1>
-        <p>Premium Utilities • 100% Free • No Registration</p>
-
+        <p>A curated hub for premium digital utilities. Fast, free, and secure.</p>
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="Search for a tool..." onkeyup="searchTool()">
         </div>
-
-        <div class="stats">
-            <span id="toolCount">0</span> Tools Ready to Use
-        </div>
     </section>
 
-    <section class="grid" id="grid">
-
+    <main class="grid" id="grid">
         <a href="calculator.html" class="card">
             <span class="icon">🧮</span>
             <h3>Nexus Calculator</h3>
-            <p>Advanced scientific calculator with voice support and history.</p>
+            <p>Advanced scientific calculator with voice support, history, and memory.</p>
         </a>
 
         <a href="age.html" class="card">
             <span class="icon">📅</span>
             <h3>Age Pro Max</h3>
-            <p>Calculate your exact age, total days lived, and zodiac sign.</p>
+            <p>Precise calculation of your age, total days lived, and zodiac sign.</p>
         </a>
 
         <a href="password.html" class="card">
             <span class="icon">🔐</span>
             <h3>PassGuard</h3>
-            <p>Generate ultra-secure passwords with custom strength settings.</p>
+            <p>Generate ultra-secure, custom-strength passwords for maximum safety.</p>
         </a>
 
         <a href="compressor.html" class="card">
             <span class="icon">🖼️</span>
             <h3>Image Shrink</h3>
-            <p>Reduce image file size instantly without losing high quality.</p>
+            <p>Reduce image file size instantly while keeping high-quality detail.</p>
         </a>
-
-    </section>
+    </main>
 
     <footer>
-        © 2026 ToolifyPro • Crafted with ❤️ by YOU 💀🔥
+        <p>&copy; 2026 ToolifyPro. Crafted with ❤️ by YOU 💀🔥</p>
     </footer>
 
     <script>
-        // Update Tool Count
-        const cards = document.querySelectorAll(".card");
-        document.getElementById("toolCount").innerText = cards.length;
+        // Simple entrance animation for cards
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 120 * index);
+            });
+        });
 
         // Search Functionality
+        const cards = document.querySelectorAll(".card");
         function searchTool() {
             let q = document.getElementById("searchInput").value.toLowerCase();
             cards.forEach(card => {
@@ -204,7 +219,5 @@
             });
         }
     </script>
-
 </body>
 </html>
-
