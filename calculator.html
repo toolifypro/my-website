@@ -1,210 +1,318 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate God Calculator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Calculator | ToolifyPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --bg: #030712;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
 
-<style>
-:root {
-    --bg:#0f172a;
-    --card:rgba(30,41,59,0.7);
-    --text:#fff;
-    --primary:#6366f1;
-}
-.light {
-    --bg:#f1f5f9;
-    --card:#ffffff;
-    --text:#000;
-}
-body{
-    margin:0;
-    font-family:system-ui;
-    background:var(--bg);
-    color:var(--text);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-}
-.container{
-    display:grid;
-    grid-template-columns:350px 260px;
-    gap:15px;
-    padding:20px;
-    background:var(--card);
-    backdrop-filter:blur(15px);
-    border-radius:20px;
-}
-.display{
-    grid-column:span 2;
-    text-align:right;
-    padding:15px;
-    font-size:2.5rem;
-    background:#0003;
-    border-radius:10px;
-}
-button{
-    padding:15px;
-    border:none;
-    border-radius:10px;
-    background:#ffffff10;
-    color:inherit;
-    cursor:pointer;
-}
-button:hover{transform:scale(1.05);}
-.grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:8px;
-}
-.side{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-.history{
-    max-height:120px;
-    overflow:auto;
-    font-size:12px;
-}
-</style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                              radial-gradient(at 100% 100%, hsla(225,39%,20%,1) 0, transparent 50%);
+            padding: 20px;
+        }
+
+        /* Nav/Back Button */
+        .nav-header {
+            width: 100%;
+            max-width: 700px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover { color: var(--primary); }
+
+        /* Main App Container */
+        .calculator-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 240px;
+            gap: 20px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            padding: 30px;
+            border-radius: 32px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 750px;
+            width: 100%;
+        }
+
+        /* Display Panel */
+        .display-panel {
+            grid-column: span 2;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: right;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 10px;
+        }
+
+        #upper-label { font-size: 0.85rem; color: var(--text-dim); min-height: 1rem; margin-bottom: 5px; letter-spacing: 1px; }
+        #main-res { font-size: 3rem; font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+        /* Button Grids */
+        .keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        
+        button {
+            border: none;
+            padding: 20px;
+            font-size: 1.1rem;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-weight: 600;
+        }
+
+        button:hover { background: rgba(255, 255, 255, 0.12); transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
+
+        .op { color: #818cf8; }
+        .sci-btn { color: #2dd4bf; font-size: 0.85rem; }
+        .eq-btn { background: var(--primary); color: white; grid-column: span 2; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2); }
+        .ac-btn { color: #f87171; }
+
+        /* Side Dashboard */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border-left: 1px solid var(--glass-border);
+            padding-left: 20px;
+        }
+
+        .section-label { font-size: 0.75rem; color: var(--text-dim); font-weight: 800; letter-spacing: 1px; margin-top: 10px; }
+
+        .history-box {
+            flex: 1;
+            overflow-y: auto;
+            font-size: 0.8rem;
+            max-height: 200px;
+            color: var(--text-dim);
+        }
+
+        .history-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .mem-status { font-size: 0.7rem; color: #fbbf24; }
+
+        .voice-pulse {
+            animation: pulse 1.5s infinite;
+            background: #ef4444 !important;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        @media (max-width: 700px) {
+            .calculator-wrapper { grid-template-columns: 1fr; }
+            .sidebar { border-left: none; padding-left: 0; padding-top: 20px; border-top: 1px solid var(--glass-border); }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="container">
+    <div class="nav-header">
+        <a href="index.html" class="back-btn">← Home</a>
+        <div style="font-weight: 800; letter-spacing: -1px; background: linear-gradient(to right, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">NEXUS CALC</div>
+    </div>
 
-<div id="display" class="display">0</div>
+    <div class="calculator-wrapper">
+        <div class="display-panel">
+            <div id="upper-label">Welcome</div>
+            <div id="main-res">0</div>
+        </div>
 
-<div class="grid">
-<button onclick="clearAll()">AC</button>
-<button onclick="memory('add')">M+</button>
-<button onclick="memory('sub')">M-</button>
-<button onclick="memory('recall')">MR</button>
+        <div class="keypad">
+            <button class="ac-btn" onclick="clearAll()">AC</button>
+            <button class="op" onclick="append('(')">(</button>
+            <button class="op" onclick="append(')')">)</button>
+            <button class="op" onclick="append('/')">÷</button>
 
-<button onclick="append('7')">7</button>
-<button onclick="append('8')">8</button>
-<button onclick="append('9')">9</button>
-<button onclick="append('/')">÷</button>
+            <button onclick="append('7')">7</button>
+            <button onclick="append('8')">8</button>
+            <button onclick="append('9')">9</button>
+            <button class="op" onclick="append('*')">×</button>
 
-<button onclick="append('4')">4</button>
-<button onclick="append('5')">5</button>
-<button onclick="append('6')">6</button>
-<button onclick="append('*')">×</button>
+            <button onclick="append('4')">4</button>
+            <button onclick="append('5')">5</button>
+            <button onclick="append('6')">6</button>
+            <button class="op" onclick="append('-')">−</button>
 
-<button onclick="append('1')">1</button>
-<button onclick="append('2')">2</button>
-<button onclick="append('3')">3</button>
-<button onclick="append('-')">−</button>
+            <button onclick="append('1')">1</button>
+            <button onclick="append('2')">2</button>
+            <button onclick="append('3')">3</button>
+            <button class="op" onclick="append('+')">+</button>
 
-<button onclick="append('0')">0</button>
-<button onclick="append('.')">.</button>
-<button onclick="calculate()">=</button>
-<button onclick="append('+')">+</button>
-</div>
+            <button onclick="append('0')">0</button>
+            <button onclick="append('.')">.</button>
+            <button class="eq-btn" onclick="calculate()">=</button>
+        </div>
 
-<div class="side">
-<button onclick="theme()">🌗 Theme</button>
-<button onclick="voice()">🎤 Voice</button>
+        <div class="sidebar">
+            <button id="voice-trigger" onclick="runVoice()" style="background: #1e293b; font-size: 0.8rem;">🎤 Voice Input</button>
+            
+            <div class="section-label">SCIENTIFIC</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button class="sci-btn" onclick="sci('sin')">sin</button>
+                <button class="sci-btn" onclick="sci('cos')">cos</button>
+                <button class="sci-btn" onclick="sci('sqrt')">√</button>
+                <button class="sci-btn" onclick="sci('log')">log</button>
+            </div>
 
-<div>Scientific</div>
-<button onclick="sci('sin')">sin</button>
-<button onclick="sci('cos')">cos</button>
-<button onclick="sci('sqrt')">√</button>
-<button onclick="sci('log')">log</button>
+            <div class="section-label">MEMORY</div>
+            <div style="display: flex; gap: 5px;">
+                <button class="sci-btn" style="flex:1; padding: 10px;" onclick="mem('add')">M+</button>
+                <button class="sci-btn" style="flex:1; padding: 10px;" onclick="mem('recall')">MR</button>
+            </div>
+            <div id="mem-val" class="mem-status">M: 0</div>
 
-<div>History</div>
-<div id="history" class="history"></div>
-</div>
+            <div class="section-label">HISTORY</div>
+            <div class="history-box" id="hist-list"></div>
+        </div>
+    </div>
 
-</div>
+    <script>
+        let input = "0";
+        let memory = 0;
+        let history = JSON.parse(localStorage.getItem("nexus_hist") || "[]");
 
-<script>
-let display=document.getElementById("display");
-let historyBox=document.getElementById("history");
+        const mainDisp = document.getElementById('main-res');
+        const upperDisp = document.getElementById('upper-label');
+        const histDisp = document.getElementById('hist-list');
+        const memDisp = document.getElementById('mem-val');
 
-let input="0";
-let memoryVal=0;
+        function updateUI() {
+            mainDisp.innerText = input;
+            renderHistory();
+        }
 
-function update(){display.innerText=input;}
+        function append(char) {
+            if (input === "0" && char !== ".") input = char;
+            else input += char;
+            updateUI();
+        }
 
-function append(val){
-    if(input==="0") input=val;
-    else input+=val;
-    update();
-}
+        function clearAll() {
+            input = "0";
+            upperDisp.innerText = "";
+            updateUI();
+        }
 
-function clearAll(){
-    input="0"; update();
-}
+        function calculate() {
+            try {
+                let expression = input.replace(/×/g, '*').replace(/÷/g, '/');
+                let result = eval(expression);
+                if (result % 1 !== 0) result = parseFloat(result.toFixed(6));
+                
+                upperDisp.innerText = input + " =";
+                saveHistory(input + " = " + result);
+                input = result.toString();
+                updateUI();
+            } catch {
+                mainDisp.innerText = "Error";
+                setTimeout(clearAll, 1000);
+            }
+        }
 
-function calculate(){
-    try{
-        let res=eval(input);
-        addHistory(input+" = "+res);
-        input=res.toString();
-        update();
-    }catch{
-        input="Error"; update();
-        setTimeout(clearAll,1000);
-    }
-}
+        function sci(type) {
+            let val = parseFloat(input);
+            let res = 0;
+            if(type === 'sin') res = Math.sin(val * Math.PI / 180);
+            if(type === 'cos') res = Math.cos(val * Math.PI / 180);
+            if(type === 'sqrt') res = Math.sqrt(val);
+            if(type === 'log') res = Math.log10(val);
+            
+            upperDisp.innerText = `${type}(${input})`;
+            input = parseFloat(res.toFixed(6)).toString();
+            updateUI();
+        }
 
-function sci(type){
-    let val=parseFloat(input);
-    if(type==="sin") input=Math.sin(val);
-    if(type==="cos") input=Math.cos(val);
-    if(type==="sqrt") input=Math.sqrt(val);
-    if(type==="log") input=Math.log10(val);
-    update();
-}
+        function mem(op) {
+            let val = parseFloat(input) || 0;
+            if(op === 'add') { memory += val; upperDisp.innerText = "Stored to Memory"; }
+            if(op === 'recall') { input = memory.toString(); }
+            memDisp.innerText = "M: " + memory;
+            updateUI();
+        }
 
-function addHistory(text){
-    let h=JSON.parse(localStorage.getItem("hist")||"[]");
-    h.unshift(text);
-    localStorage.setItem("hist",JSON.stringify(h));
-    renderHistory();
-}
+        function saveHistory(item) {
+            history.unshift(item);
+            if (history.length > 10) history.pop();
+            localStorage.setItem("nexus_hist", JSON.stringify(history));
+        }
 
-function renderHistory(){
-    let h=JSON.parse(localStorage.getItem("hist")||"[]");
-    historyBox.innerHTML=h.slice(0,8).map(x=>`<div>${x}</div>`).join("");
-}
-renderHistory();
+        function renderHistory() {
+            histDisp.innerHTML = history.map(h => `<div class="history-item">${h}</div>`).join('');
+        }
 
-function memory(type){
-    let val=parseFloat(input);
-    if(type==="add") memoryVal+=val;
-    if(type==="sub") memoryVal-=val;
-    if(type==="recall"){ input=memoryVal.toString(); update(); }
-}
+        function runVoice() {
+            const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!Speech) return alert("Browser not supported");
+            const rec = new Speech();
+            const btn = document.getElementById('voice-trigger');
+            
+            rec.onstart = () => btn.classList.add('voice-pulse');
+            rec.onend = () => btn.classList.remove('voice-pulse');
+            
+            rec.onresult = (e) => {
+                let text = e.results[0][0].transcript.toLowerCase();
+                text = text.replace(/plus/g, '+').replace(/minus/g, '-').replace(/times|into/g, '*').replace(/divided by/g, '/');
+                input = text.replace(/[^0-9+\-*/.]/g, '');
+                calculate();
+            };
+            rec.start();
+        }
 
-function theme(){
-    document.body.classList.toggle("light");
-}
+        // Keyboard Logic
+        document.addEventListener("keydown", e => {
+            if (!isNaN(e.key) || "+-*/.()".includes(e.key)) append(e.key);
+            if (e.key === "Enter") calculate();
+            if (e.key === "Backspace") {
+                input = input.length > 1 ? input.slice(0, -1) : "0";
+                updateUI();
+            }
+        });
 
-function voice(){
-    let Speech=window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(!Speech){alert("No voice support");return;}
-    let rec=new Speech();
-    rec.onresult=(e)=>{
-        let t=e.results[0][0].transcript;
-        t=t.replace(/plus/g,'+').replace(/minus/g,'-').replace(/times/g,'*').replace(/divide/g,'/');
-        input=t.replace(/[^0-9+\-*/.]/g,'');
-        calculate();
-    };
-    rec.start();
-}
-
-/* Keyboard */
-document.addEventListener("keydown",e=>{
-    if(!isNaN(e.key)||"+-*/.".includes(e.key)) append(e.key);
-    if(e.key==="Enter") calculate();
-    if(e.key==="Backspace") input=input.slice(0,-1)||"0",update();
-});
-</script>
-
+        renderHistory();
+    </script>
 </body>
 </html>
