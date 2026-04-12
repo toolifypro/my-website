@@ -1,190 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ToolifyPro | Ultimate Tools Hub</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToolifyPro | Ultimate Tools Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #020617;
+            --card: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #fff;
+            --dim: #94a3b8;
+            --primary: #6366f1;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
-<style>
-:root{
---bg:#020617;
---card:rgba(255,255,255,0.04);
---border:rgba(255,255,255,0.08);
---text:#fff;
---dim:#94a3b8;
---primary:#6366f1;
-}
+        body {
+            background: radial-gradient(circle at 20% 30%, #1e1b4b, transparent),
+                        radial-gradient(circle at 80% 70%, #312e81, transparent),
+                        var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+        /* HEADER */
+        header {
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 8%;
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
 
-body{
-background:radial-gradient(circle at 20% 30%, #1e1b4b, transparent),
-           radial-gradient(circle at 80% 70%, #312e81, transparent),
-           var(--bg);
-color:var(--text);
-}
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-/* HEADER */
-header{
-position:sticky;
-top:0;
-display:flex;
-justify-content:space-between;
-padding:20px 8%;
-backdrop-filter:blur(10px);
-border-bottom:1px solid var(--border);
-z-index:100;
-}
-.logo{
-font-weight:800;
-font-size:1.5rem;
-background:linear-gradient(to right,#6366f1,#a855f7);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
+        /* HERO */
+        .hero { text-align: center; padding: 80px 10% 40px 10%; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; font-weight: 800; letter-spacing: -1px; }
+        .hero p { color: var(--dim); font-size: 1.1rem; }
 
-/* HERO */
-.hero{
-text-align:center;
-padding:80px 10%;
-}
-.hero h1{
-font-size:3rem;
-margin-bottom:10px;
-}
-.hero p{color:var(--dim);}
+        /* SEARCH */
+        .search-box { margin-top: 30px; }
+        .search-box input {
+            padding: 15px 25px;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            outline: none;
+            transition: 0.3s;
+            text-align: center;
+        }
+        .search-box input:focus { border-color: var(--primary); background: rgba(255, 255, 255, 0.1); box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); }
 
-/* SEARCH */
-.search-box{
-margin-top:25px;
-}
-.search-box input{
-padding:12px 20px;
-width:300px;
-border-radius:30px;
-border:none;
-outline:none;
-}
+        /* GRID */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 40px 10%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-/* GRID */
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:25px;
-padding:40px 10%;
-}
+        /* CARD */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 40px 30px;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
 
-/* CARD */
-.card{
-background:var(--card);
-border:1px solid var(--border);
-padding:30px;
-border-radius:20px;
-cursor:pointer;
-transition:0.4s;
-position:relative;
-overflow:hidden;
-}
-.card:hover{
-transform:translateY(-10px) scale(1.03);
-box-shadow:0 0 30px rgba(99,102,241,0.3);
-border-color:var(--primary);
-}
+        .card:hover {
+            transform: translateY(-12px);
+            background: rgba(255, 255, 255, 0.07);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.1);
+        }
 
-.card h3{margin-top:10px;}
-.card p{color:var(--dim);font-size:0.9rem;}
+        .card .icon { font-size: 3rem; margin-bottom: 20px; display: block; }
+        .card h3 { font-size: 1.3rem; margin-bottom: 10px; font-weight: 700; }
+        .card p { color: var(--dim); font-size: 0.9rem; line-height: 1.5; }
 
-/* STATS */
-.stats{
-text-align:center;
-margin-top:20px;
-color:var(--dim);
-}
+        /* STATS */
+        .stats { margin-top: 20px; color: var(--dim); font-size: 0.9rem; font-weight: 500; }
+        #toolCount { color: var(--primary); font-weight: 800; }
 
-/* FOOTER */
-footer{
-text-align:center;
-padding:40px;
-color:var(--dim);
-border-top:1px solid var(--border);
-}
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--dim);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
 
-@media(max-width:600px){
-.search-box input{width:90%;}
-}
-</style>
+        @media(max-width:600px) {
+            .hero h1 { font-size: 2.2rem; }
+            .grid { padding: 20px 5%; }
+        }
+    </style>
 </head>
 
 <body>
 
-<header>
-<div class="logo">ToolifyPro</div>
-<div>🚀 v2.0</div>
-</header>
+    <header>
+        <div class="logo">ToolifyPro</div>
+        <div style="color: var(--dim); font-weight: 600; font-size: 0.8rem; letter-spacing: 1px;">🚀 v2.0</div>
+    </header>
 
-<section class="hero">
-<h1>All Tools in One Place ⚡</h1>
-<p>Fast • Free • No Login Needed</p>
+    <section class="hero">
+        <h1>All Tools in One Place ⚡</h1>
+        <p>Premium Utilities • 100% Free • No Registration</p>
 
-<div class="search-box">
-<input type="text" placeholder="Search tools..." onkeyup="searchTool(this.value)">
-</div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search for a tool..." onkeyup="searchTool()">
+        </div>
 
-<div class="stats">
-<span id="toolCount">0</span> tools available
-</div>
-</section>
+        <div class="stats">
+            <span id="toolCount">0</span> Tools Ready to Use
+        </div>
+    </section>
 
-<section class="grid" id="grid">
+    <section class="grid" id="grid">
 
-<div class="card" onclick="go('calculator.html')">
-<h2>🧮</h2>
-<h3>Calculator</h3>
-<p>Advanced smart calculator</p>
-</div>
+        <a href="calculator.html" class="card">
+            <span class="icon">🧮</span>
+            <h3>Nexus Calculator</h3>
+            <p>Advanced scientific calculator with voice support and history.</p>
+        </a>
 
-<div class="card" onclick="go('age.html')">
-<h2>📅</h2>
-<h3>Age Calculator</h3>
-<p>Find your exact age</p>
-</div>
+        <a href="age.html" class="card">
+            <span class="icon">📅</span>
+            <h3>Age Pro Max</h3>
+            <p>Calculate your exact age, total days lived, and zodiac sign.</p>
+        </a>
 
-<div class="card" onclick="go('password.html')">
-<h2>🔐</h2>
-<h3>Password Generator</h3>
-<p>Secure passwords instantly</p>
-</div>
+        <a href="password.html" class="card">
+            <span class="icon">🔐</span>
+            <h3>PassGuard</h3>
+            <p>Generate ultra-secure passwords with custom strength settings.</p>
+        </a>
 
-           <a href="compressor.html" class="tool-card">
-    <div class="icon-box">🖼️</div>
-    <h3>Image Shrink</h3>
-    <p>Compress high-quality images to smaller sizes without losing detail.</p>
-</a>
+        <a href="compressor.html" class="card">
+            <span class="icon">🖼️</span>
+            <h3>Image Shrink</h3>
+            <p>Reduce image file size instantly without losing high quality.</p>
+        </a>
 
-</section>
+    </section>
 
-<footer>
-© 2026 ToolifyPro • Built by YOU 💀🔥
-</footer>
+    <footer>
+        © 2026 ToolifyPro • Crafted with ❤️ by YOU 💀🔥
+    </footer>
 
-<script>
-const cards=document.querySelectorAll(".card");
-document.getElementById("toolCount").innerText=cards.length;
+    <script>
+        // Update Tool Count
+        const cards = document.querySelectorAll(".card");
+        document.getElementById("toolCount").innerText = cards.length;
 
-function go(page){
-window.location.href=page;
-}
-
-function searchTool(q){
-q=q.toLowerCase();
-cards.forEach(card=>{
-let text=card.innerText.toLowerCase();
-card.style.display=text.includes(q)?"block":"none";
-});
-}
-</script>
+        // Search Functionality
+        function searchTool() {
+            let q = document.getElementById("searchInput").value.toLowerCase();
+            cards.forEach(card => {
+                let title = card.querySelector("h3").innerText.toLowerCase();
+                let desc = card.querySelector("p").innerText.toLowerCase();
+                if (title.includes(q) || desc.includes(q)) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+    </script>
 
 </body>
 </html>
+
