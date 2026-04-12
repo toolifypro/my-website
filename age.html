@@ -1,125 +1,229 @@
-<!-- SAME CODE BUT UPGRADED -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Age Calculator | ToolifyPro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Pro | ToolifyPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --bg: #030712;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
 
-<style>
-body{
-background:#020617;
-color:white;
-font-family:Arial;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-margin:0;
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
 
-.container{
-background:rgba(255,255,255,0.05);
-padding:30px;
-border-radius:20px;
-width:320px;
-text-align:center;
-box-shadow:0 0 20px rgba(99,102,241,0.3);
-}
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at top right, #1e1b4b, #030712);
+            padding: 20px;
+        }
 
-input{
-padding:10px;
-width:100%;
-border:none;
-border-radius:10px;
-margin:10px 0;
-}
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 35px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            animation: fadeIn 0.6s ease-out;
+        }
 
-button{
-padding:10px;
-margin:5px;
-border:none;
-border-radius:10px;
-cursor:pointer;
-}
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-.calc{background:#6366f1;color:white;}
-.reset{background:#333;color:white;}
+        h2 { font-weight: 800; font-size: 1.8rem; margin-bottom: 10px; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .input-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-.result{
-margin-top:20px;
-display:none;
-}
+        label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
 
-.card{
-margin:10px 0;
-padding:10px;
-background:#111827;
-border-radius:10px;
-}
+        input[type="date"] {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+            text-align: center;
+        }
 
-.back{
-margin-top:10px;
-display:block;
-color:#94a3b8;
-}
-</style>
+        .btn-group { display: flex; gap: 12px; }
+
+        button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .calc-btn { background: var(--primary); color: white; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2); }
+        .calc-btn:hover { background: #4f46e5; transform: translateY(-2px); }
+
+        .reset-btn { background: rgba(255,255,255,0.05); color: var(--text-dim); }
+        .reset-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        /* Result Cards */
+        #result-area { margin-top: 30px; display: none; }
+
+        .main-age-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .age-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            padding: 15px;
+            border-radius: 18px;
+            transition: 0.3s;
+        }
+
+        .age-card:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.05); }
+
+        .age-card span { display: block; font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+        .age-card label { font-size: 0.65rem; color: var(--text-dim); margin: 0; }
+
+        .extra-stats {
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            text-align: left;
+            line-height: 1.8;
+            border: 1px dashed rgba(255,255,255,0.1);
+        }
+
+        .stat-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.03); padding: 5px 0; }
+        .stat-val { color: var(--secondary); font-weight: 600; }
+
+        .back-home { display: block; margin-top: 25px; color: var(--text-dim); text-decoration: none; font-size: 0.8rem; }
+        .back-home:hover { color: var(--primary); }
+
+    </style>
 </head>
-
 <body>
 
-<div class="container">
-<h2>🎂 Age Calculator</h2>
+    <div class="container">
+        <h2>Age Pro Max</h2>
+        <p style="color: var(--text-dim); font-size: 0.8rem;">Nexus Edition Tool</p>
 
-<input type="date" id="dob">
-<button class="calc" onclick="calc()">Calculate</button>
-<button class="reset" onclick="reset()">Reset</button>
+        <div class="input-box">
+            <label>Date of Birth</label>
+            <input type="date" id="dob">
+        </div>
 
-<div class="result" id="result">
-<div class="card" id="age"></div>
-<div class="card" id="extra"></div>
-</div>
+        <div class="btn-group">
+            <button class="calc-btn" onclick="calculate()">Calculate Age</button>
+            <button class="reset-btn" onclick="reset()">Reset</button>
+        </div>
 
-<a href="index.html" class="back">← Back</a>
+        <div id="result-area">
+            <div class="main-age-grid">
+                <div class="age-card">
+                    <span id="res-y">0</span>
+                    <label>Years</label>
+                </div>
+                <div class="age-card">
+                    <span id="res-m">0</span>
+                    <label>Months</label>
+                </div>
+                <div class="age-card">
+                    <span id="res-d">0</span>
+                    <label>Days</label>
+                </div>
+            </div>
 
-</div>
+            <div class="extra-stats">
+                <div class="stat-row"><span>Total Days:</span> <span class="stat-val" id="total-days">0</span></div>
+                <div class="stat-row"><span>Total Hours:</span> <span class="stat-val" id="total-hours">0</span></div>
+                <div class="stat-row"><span>Total Seconds:</span> <span class="stat-val" id="total-sec">0</span></div>
+                <div class="stat-row"><span>Zodiac Sign:</span> <span class="stat-val" id="zodiac">---</span></div>
+            </div>
+        </div>
 
-<script>
-function calc(){
-let dob=document.getElementById("dob").value;
-if(!dob) return;
+        <a href="index.html" class="back-home">← Back to Dashboard</a>
+    </div>
 
-let birth=new Date(dob);
-let now=new Date();
+    <script>
+        function calculate() {
+            const dobVal = document.getElementById("dob").value;
+            if (!dobVal) return;
 
-let ageY=now.getFullYear()-birth.getFullYear();
-let ageM=now.getMonth()-birth.getMonth();
-let ageD=now.getDate()-birth.getDate();
+            const birth = new Date(dobVal);
+            const now = new Date();
 
-if(ageD<0){ageM--; ageD+=30;}
-if(ageM<0){ageY--; ageM+=12;}
+            let y = now.getFullYear() - birth.getFullYear();
+            let m = now.getMonth() - birth.getMonth();
+            let d = now.getDate() - birth.getDate();
 
-document.getElementById("result").style.display="block";
+            if (d < 0) { m--; const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0); d += prevMonth.getDate(); }
+            if (m < 0) { y--; m += 12; }
 
-document.getElementById("age").innerHTML=
-`Age: ${ageY} Years ${ageM} Months ${ageD} Days`;
+            document.getElementById("result-area").style.display = "block";
 
-let diff=now-birth;
+            // Animate Numbers
+            animateValue("res-y", 0, y, 800);
+            animateValue("res-m", 0, m, 800);
+            animateValue("res-d", 0, d, 800);
 
-let days=Math.floor(diff/(1000*60*60*24));
-let hours=Math.floor(diff/(1000*60*60));
-let minutes=Math.floor(diff/(1000*60));
-let seconds=Math.floor(diff/1000);
+            // Detailed Stats
+            const diff = now - birth;
+            document.getElementById("total-days").innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toLocaleString();
+            document.getElementById("total-hours").innerText = Math.floor(diff / (1000 * 60 * 60)).toLocaleString();
+            document.getElementById("total-sec").innerText = Math.floor(diff / 1000).toLocaleString();
+            
+            // Zodiac Logic
+            document.getElementById("zodiac").innerText = getZodiac(birth.getDate(), birth.getMonth() + 1);
+        }
 
-document.getElementById("extra").innerHTML=
-`Days: ${days}<br>Hours: ${hours}<br>Minutes: ${minutes}<br>Seconds: ${seconds}`;
-}
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerText = Math.floor(progress * (end - start) + start);
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
 
-function reset(){
-document.getElementById("dob").value="";
-document.getElementById("result").style.display="none";
-}
-</script>
+        function getZodiac(day, month) {
+            const signs = ["Capricorn", "Aquarius", "Pisces", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius"];
+            const last_days = [19, 18, 20, 19, 20, 20, 22, 22, 22, 22, 21, 21];
+            return (day > last_days[month - 1]) ? signs[month % 12] : signs[month - 1];
+        }
 
+        function reset() {
+            document.getElementById("dob").value = "";
+            document.getElementById("result-area").style.display = "none";
+        }
+    </script>
 </body>
 </html>
