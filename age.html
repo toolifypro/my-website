@@ -1,252 +1,125 @@
+<!-- SAME CODE BUT UPGRADED -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Age Calculator | ToolifyPro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #6366f1;
-            --secondary: #a855f7;
-            --bg: #030712;
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Age Calculator | ToolifyPro</title>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+<style>
+body{
+background:#020617;
+color:white;
+font-family:Arial;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
 
-        body {
-            background-color: var(--bg);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            background: radial-gradient(circle at 50% 50%, #111827 0%, #030712 100%);
-        }
+.container{
+background:rgba(255,255,255,0.05);
+padding:30px;
+border-radius:20px;
+width:320px;
+text-align:center;
+box-shadow:0 0 20px rgba(99,102,241,0.3);
+}
 
-        /* Glass Container */
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 32px;
-            padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.8s ease;
-        }
+input{
+padding:10px;
+width:100%;
+border:none;
+border-radius:10px;
+margin:10px 0;
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+button{
+padding:10px;
+margin:5px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
 
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
-        .header p { color: var(--text-dim); font-size: 0.9rem; }
+.calc{background:#6366f1;color:white;}
+.reset{background:#333;color:white;}
 
-        /* Input Styling */
-        .input-group { margin-bottom: 25px; }
-        label { display: block; margin-bottom: 10px; color: var(--text-dim); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        
-        input[type="date"] {
-            width: 100%;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            color: white;
-            font-size: 1rem;
-            outline: none;
-            transition: 0.3s;
-        }
+.result{
+margin-top:20px;
+display:none;
+}
 
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
-        input[type="date"]:focus { border-color: var(--primary); background: rgba(255, 255, 255, 0.1); }
+.card{
+margin:10px 0;
+padding:10px;
+background:#111827;
+border-radius:10px;
+}
 
-        /* Buttons */
-        .btn-group { display: flex; gap: 10px; }
-        button {
-            flex: 1;
-            padding: 15px;
-            border-radius: 12px;
-            border: none;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .calc-btn { background: var(--primary); color: white; }
-        .calc-btn:hover { background: #4f46e5; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
-        
-        .reset-btn { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--glass-border); }
-        .reset-btn:hover { background: rgba(255, 255, 255, 0.1); }
-
-        /* Results Display */
-        .result-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 30px;
-            display: none; /* Hidden initially */
-        }
-
-        .result-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
-            padding: 15px;
-            border-radius: 16px;
-            text-align: center;
-        }
-
-        .result-card span { display: block; font-size: 1.5rem; font-weight: 800; color: var(--primary); }
-        .result-card label { margin-bottom: 0; margin-top: 5px; font-size: 0.7rem; color: var(--text-dim); }
-
-        .extra-info {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(99, 102, 241, 0.05);
-            border-radius: 16px;
-            font-size: 0.85rem;
-            text-align: center;
-            display: none;
-            color: var(--text-dim);
-        }
-
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 25px;
-            color: var(--text-dim);
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: 0.3s;
-        }
-
-        .back-link:hover { color: var(--primary); }
-
-    </style>
+.back{
+margin-top:10px;
+display:block;
+color:#94a3b8;
+}
+</style>
 </head>
+
 <body>
 
-    <div class="container">
-        <div class="header">
-            <h1>Age Calculator</h1>
-            <p>Precise calculation of your life journey.</p>
-        </div>
+<div class="container">
+<h2>🎂 Age Calculator</h2>
 
-        <div class="input-group">
-            <label>Select Date of Birth</label>
-            <input type="date" id="dob" max="">
-        </div>
+<input type="date" id="dob">
+<button class="calc" onclick="calc()">Calculate</button>
+<button class="reset" onclick="reset()">Reset</button>
 
-        <div class="btn-group">
-            <button class="calc-btn" onclick="calculateAge()">Calculate</button>
-            <button class="reset-btn" onclick="resetForm()">Reset</button>
-        </div>
+<div class="result" id="result">
+<div class="card" id="age"></div>
+<div class="card" id="extra"></div>
+</div>
 
-        <div class="result-grid" id="resultGrid">
-            <div class="result-card">
-                <span id="years">0</span>
-                <label>Years</label>
-            </div>
-            <div class="result-card">
-                <span id="months">0</span>
-                <label>Months</label>
-            </div>
-            <div class="result-card">
-                <span id="days">0</span>
-                <label>Days</label>
-            </div>
-        </div>
+<a href="index.html" class="back">← Back</a>
 
-        <div class="extra-info" id="extraInfo"></div>
+</div>
 
-        <a href="index.html" class="back-link">← Back to ToolifyPro</a>
-    </div>
+<script>
+function calc(){
+let dob=document.getElementById("dob").value;
+if(!dob) return;
 
-    <script>
-        // Set max date to today so user can't select future
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('dob').setAttribute('max', today);
+let birth=new Date(dob);
+let now=new Date();
 
-        function calculateAge() {
-            const dobInput = document.getElementById('dob').value;
-            if (!dobInput) {
-                alert("Please select your birth date!");
-                return;
-            }
+let ageY=now.getFullYear()-birth.getFullYear();
+let ageM=now.getMonth()-birth.getMonth();
+let ageD=now.getDate()-birth.getDate();
 
-            const dob = new Date(dobInput);
-            const now = new Date();
+if(ageD<0){ageM--; ageD+=30;}
+if(ageM<0){ageY--; ageM+=12;}
 
-            let years = now.getFullYear() - dob.getFullYear();
-            let months = now.getMonth() - dob.getMonth();
-            let days = now.getDate() - dob.getDate();
+document.getElementById("result").style.display="block";
 
-            // Adjustment for negative days/months
-            if (days < 0) {
-                months--;
-                const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-                days += lastMonth.getDate();
-            }
+document.getElementById("age").innerHTML=
+`Age: ${ageY} Years ${ageM} Months ${ageD} Days`;
 
-            if (months < 0) {
-                years--;
-                months += 12;
-            }
+let diff=now-birth;
 
-            // Display results with animation
-            const grid = document.getElementById('resultGrid');
-            const extra = document.getElementById('extraInfo');
-            
-            grid.style.display = 'grid';
-            extra.style.display = 'block';
+let days=Math.floor(diff/(1000*60*60*24));
+let hours=Math.floor(diff/(1000*60*60));
+let minutes=Math.floor(diff/(1000*60));
+let seconds=Math.floor(diff/1000);
 
-            animateValue("years", 0, years, 1000);
-            animateValue("months", 0, months, 1000);
-            animateValue("days", 0, days, 1000);
+document.getElementById("extra").innerHTML=
+`Days: ${days}<br>Hours: ${hours}<br>Minutes: ${minutes}<br>Seconds: ${seconds}`;
+}
 
-            // Total Days Lived
-            const diffTime = Math.abs(now - dob);
-            const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+function reset(){
+document.getElementById("dob").value="";
+document.getElementById("result").style.display="none";
+}
+</script>
 
-            // Next Birthday Calculation
-            let nextBirthday = new Date(now.getFullYear(), dob.getMonth(), dob.getDate());
-            if (now > nextBirthday) {
-                nextBirthday.setFullYear(now.getFullYear() + 1);
-            }
-            const daysToBirthday = Math.ceil((nextBirthday - now) / (1000 * 60 * 60 * 24));
-
-            extra.innerHTML = `You have lived for <b>${totalDays.toLocaleString()}</b> days! <br> 
-                               Next birthday in <b>${daysToBirthday}</b> days. 🎉`;
-        }
-
-        function animateValue(id, start, end, duration) {
-            const obj = document.getElementById(id);
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                obj.innerText = Math.floor(progress * (end - start) + start);
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                }
-            };
-            window.requestAnimationFrame(step);
-        }
-
-        function resetForm() {
-            document.getElementById('dob').value = '';
-            document.getElementById('resultGrid').style.display = 'none';
-            document.getElementById('extraInfo').style.display = 'none';
-        }
-    </script>
 </body>
 </html>
