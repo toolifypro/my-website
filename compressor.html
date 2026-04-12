@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Shrink | ToolifyPro Image Compressor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --bg: #030712;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                              radial-gradient(at 100% 100%, hsla(225,39%,20%,1) 0, transparent 50%);
+        }
+
+        /* Nav/Back Button */
+        .nav-header {
+            width: 100%;
+            max-width: 700px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: fixed; top: 20px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.3s;
+        }
+        .back-btn:hover { color: var(--primary); }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 30px; }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            cursor: pointer;
+            transition: 0.3s;
+            background: rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .upload-area:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.05); }
+
+        .upload-area.dragover { border-color: var(--secondary); background: rgba(168, 85, 247, 0.05); }
+
+        .upload-area p { color: var(--text-dim); font-size: 0.9rem; margin-top: 10px; }
+        .upload-area .icon { font-size: 2.5rem; color: var(--text-dim); }
+
+        #image-input { display: none; }
+
+        /* Preview & Info */
+        .preview-area { margin-top: 30px; display: none; }
+        .file-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 15px;
+        }
+        .info-card { text-align: left; }
+        .info-card label { font-size: 0.75rem; color: var(--text-dim); font-weight: 700; }
+        .info-card span { display: block; font-size: 1rem; color: var(--text-main); font-weight: 600; margin-top: 5px; }
+
+        /* Compression Slider */
+        .controls { margin-top: 30px; display: none; }
+        .label-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.85rem; color: var(--text-dim); }
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Action Buttons */
+        .btn-group { display: flex; gap: 10px; margin-top: 30px; display: none; }
+        button {
+            flex: 1;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .compress-btn { background: var(--primary); color: white; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2); }
+        .compress-btn:hover { background: #4f46e5; transform: translateY(-2px); }
+
+        .download-btn { background: var(--secondary); color: white; display: none; }
+        .download-btn:hover { background: #9333ea; transform: translateY(-2px); }
+
+        #preview-img { max-width: 100%; max-height: 150px; border-radius: 8px; border: 1px solid var(--glass-border); margin-top: 10px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="nav-header">
+        <a href="index.html" class="back-btn">← ToolifyPro</a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Image Shrink</h1>
+            <p>Instant file compression, no server required.</p>
+        </div>
+
+        <label for="image-input" class="upload-area" id="drop-zone">
+            <div class="icon">🖼️</div>
+            <p>Click or Drag to Upload Image</p>
+            <p style="font-size: 0.75rem;">Supports JPG, PNG (will be converted to JPG)</p>
+            <input type="file" id="image-input" accept="image/*">
+        </label>
+
+        <div class="preview-area" id="preview-area">
+            <img id="preview-img" src="" alt="Preview">
+            <div class="file-info">
+                <div class="info-card">
+                    <label>Original Size</label>
+                    <span id="orig-size">0 KB</span>
+                </div>
+                <div class="info-card">
+                    <label>Dimensions</label>
+                    <span id="orig-dim">0 x 0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls" id="controls">
+            <div class="label-row">
+                <span>Compression Quality</span>
+                <span id="quality-val">80%</span>
+            </div>
+            <input type="range" id="quality" min="10" max="90" value="80" oninput="updateQualityLabel()">
+        </div>
+
+        <div class="btn-group" id="btn-group">
+            <button class="compress-btn" onclick="compressImage()">Compress Now</button>
+            <a href="#" id="download-link" style="display: none;"></a>
+            <button class="download-btn" id="download-btn" onclick="downloadImage()">Download Compressed</button>
+        </div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('image-input');
+        const dropZone = document.getElementById('drop-zone');
+        const previewArea = document.getElementById('preview-area');
+        const previewImg = document.getElementById('preview-img');
+        const controls = document.getElementById('controls');
+        const btnGroup = document.getElementById('btn-group');
+        const downloadBtn = document.getElementById('download-btn');
+        const qualitySlider = document.getElementById('quality');
+
+        let originalFile = null;
+        let compressedBlob = null;
+
+        // update quality label
+        function updateQualityLabel() {
+            document.getElementById('quality-val').innerText = qualitySlider.value + "%";
+        }
+
+        // handle upload
+        imageInput.addEventListener('change', handleUpload);
+
+        // drag and drop support
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                processFile(file);
+            }
+        });
+
+        function handleUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                processFile(file);
+            }
+        }
+
+        function processFile(file) {
+            originalFile = file;
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+                previewArea.style.display = 'block';
+                controls.style.display = 'block';
+                btnGroup.style.display = 'flex';
+                downloadBtn.style.display = 'none';
+
+                // Update info
+                document.getElementById('orig-size').innerText = formatSize(file.size);
+                
+                // Get dimensions
+                const img = new Image();
+                img.onload = () => {
+                    document.getElementById('orig-dim').innerText = `${img.width} x ${img.height}`;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function formatSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function compressImage() {
+            if (!originalFile) return;
+
+            const quality = qualitySlider.value / 100;
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+
+                    ctx.drawImage(img, 0, 0);
+
+                    // Compress as JPG
+                    canvas.toBlob((blob) => {
+                        compressedBlob = blob;
+                        const compressedSize = formatSize(blob.size);
+                        
+                        // update extra info
+                        const extra = document.getElementById('orig-dim');
+                        extra.innerHTML = `<label>Compressed Size</label> ${compressedSize}`;
+                        
+                        // Show download button
+                        downloadBtn.style.display = 'block';
+                        downloadBtn.innerText = `Download (${compressedSize})`;
+                    }, 'image/jpeg', quality);
+                };
+            };
+            reader.readAsDataURL(originalFile);
+        }
+
+        function downloadImage() {
+            if (!compressedBlob) return;
+            const downloadLink = document.getElementById('download-link');
+            downloadLink.href = URL.createObjectURL(compressedBlob);
+            downloadLink.download = `toolifypro_shrink_${originalFile.name}`;
+            downloadLink.click();
+        }
+
+    </script>
+</body>
+</html>
