@@ -2,74 +2,187 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>ToolifyPro - Free Tools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToolifyPro | Ultimate Tools Hub</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
 <style>
+:root{
+--bg:#020617;
+--card:rgba(255,255,255,0.04);
+--border:rgba(255,255,255,0.08);
+--text:#fff;
+--dim:#94a3b8;
+--primary:#6366f1;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+
 body{
-    margin:0;
-    font-family:Arial;
-    background:linear-gradient(135deg,#0f172a,#1e293b);
-    color:white;
-    text-align:center;
+background:radial-gradient(circle at 20% 30%, #1e1b4b, transparent),
+           radial-gradient(circle at 80% 70%, #312e81, transparent),
+           var(--bg);
+color:var(--text);
 }
 
-h1{
-    margin-top:40px;
-    font-size:40px;
+/* HEADER */
+header{
+position:sticky;
+top:0;
+display:flex;
+justify-content:space-between;
+padding:20px 8%;
+backdrop-filter:blur(10px);
+border-bottom:1px solid var(--border);
+z-index:100;
+}
+.logo{
+font-weight:800;
+font-size:1.5rem;
+background:linear-gradient(to right,#6366f1,#a855f7);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
-p{
-    color:#94a3b8;
+/* HERO */
+.hero{
+text-align:center;
+padding:80px 10%;
+}
+.hero h1{
+font-size:3rem;
+margin-bottom:10px;
+}
+.hero p{color:var(--dim);}
+
+/* SEARCH */
+.search-box{
+margin-top:25px;
+}
+.search-box input{
+padding:12px 20px;
+width:300px;
+border-radius:30px;
+border:none;
+outline:none;
 }
 
-.container{
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    margin-top:50px;
-    flex-wrap:wrap;
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+padding:40px 10%;
 }
 
+/* CARD */
 .card{
-    background:#1e293b;
-    padding:30px;
-    border-radius:15px;
-    width:200px;
-    cursor:pointer;
-    transition:0.3s;
-    box-shadow:0 0 10px rgba(0,0,0,0.5);
+background:var(--card);
+border:1px solid var(--border);
+padding:30px;
+border-radius:20px;
+cursor:pointer;
+transition:0.4s;
+position:relative;
+overflow:hidden;
 }
-
 .card:hover{
-    transform:scale(1.1);
-    background:#334155;
+transform:translateY(-10px) scale(1.03);
+box-shadow:0 0 30px rgba(99,102,241,0.3);
+border-color:var(--primary);
 }
 
-.icon{
-    font-size:40px;
-    margin-bottom:10px;
+.card h3{margin-top:10px;}
+.card p{color:var(--dim);font-size:0.9rem;}
+
+/* STATS */
+.stats{
+text-align:center;
+margin-top:20px;
+color:var(--dim);
+}
+
+/* FOOTER */
+footer{
+text-align:center;
+padding:40px;
+color:var(--dim);
+border-top:1px solid var(--border);
+}
+
+@media(max-width:600px){
+.search-box input{width:90%;}
 }
 </style>
 </head>
 
 <body>
 
-<h1>🚀 ToolifyPro</h1>
-<p>Free Online Tools for Everyone</p>
+<header>
+<div class="logo">ToolifyPro</div>
+<div>🚀 v2.0</div>
+</header>
 
-<div class="container">
+<section class="hero">
+<h1>All Tools in One Place ⚡</h1>
+<p>Fast • Free • No Login Needed</p>
 
-<div class="card" onclick="openTool('calculator.html')">
-<div class="icon">🧮</div>
+<div class="search-box">
+<input type="text" placeholder="Search tools..." onkeyup="searchTool(this.value)">
+</div>
+
+<div class="stats">
+<span id="toolCount">0</span> tools available
+</div>
+</section>
+
+<section class="grid" id="grid">
+
+<div class="card" onclick="go('calculator.html')">
+<h2>🧮</h2>
 <h3>Calculator</h3>
-<p>Advanced Calculator Tool</p>
+<p>Advanced smart calculator</p>
 </div>
 
+<div class="card" onclick="go('age.html')">
+<h2>📅</h2>
+<h3>Age Calculator</h3>
+<p>Find your exact age</p>
 </div>
+
+<div class="card" onclick="go('password.html')">
+<h2>🔐</h2>
+<h3>Password Generator</h3>
+<p>Secure passwords instantly</p>
+</div>
+
+<div class="card">
+<h2>🖼️</h2>
+<h3>Image Compressor</h3>
+<p>Coming soon...</p>
+</div>
+
+</section>
+
+<footer>
+© 2026 ToolifyPro • Built by YOU 💀🔥
+</footer>
 
 <script>
-function openTool(page){
-    window.location.href=page;
+const cards=document.querySelectorAll(".card");
+document.getElementById("toolCount").innerText=cards.length;
+
+function go(page){
+window.location.href=page;
+}
+
+function searchTool(q){
+q=q.toLowerCase();
+cards.forEach(card=>{
+let text=card.innerText.toLowerCase();
+card.style.display=text.includes(q)?"block":"none";
+});
 }
 </script>
 
