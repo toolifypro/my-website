@@ -67,7 +67,9 @@
     </div>
 
     <script>
-      const API_KEY = "AIzaSyDrl3hWYggKsSYiahYdWWy2gmA1SuZyHkM"; 
+    <script>
+        // Teri API Key bilkul sahi hai, bas call karne ka tareeka thoda aur robust chahiye
+        const API_KEY = "AIzaSyDrl3hWYggKsSYiahYdWWy2gmA1SuZyHkM"; 
         const chat = document.getElementById('chat');
         const input = document.getElementById('userInput');
         const btn = document.getElementById('sendBtn');
@@ -76,49 +78,51 @@
             const prompt = input.value.trim();
             if (!prompt) return;
 
+            // User Message Display
             addBubble(prompt, 'user-bubble');
             input.value = "";
             btn.disabled = true;
 
+            // Loading Animation
             const loadingBubble = document.createElement('div');
             loadingBubble.className = 'bubble ai-bubble';
+            loadingBubble.id = "temp-loading";
             loadingBubble.innerHTML = `<div class="loading-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
             chat.appendChild(loadingBubble);
             chat.scrollTop = chat.scrollHeight;
 
             try {
-                // Fixed the URL and Payload structure
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                // Version 1.5 Flash Endpoint
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+                
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        "contents": [{
-                            "parts": [{
-                                "text": prompt
-                            }]
-                        }]
+                        contents: [{ parts: [{ text: prompt }] }]
                     })
                 });
 
-                if (!response.ok) {
-                    throw new Error('API Response not OK');
-                }
-
                 const data = await response.json();
-                
-                // Extra check for safety
-                if(data.candidates && data.candidates[0].content.parts[0].text) {
-                    const aiResponse = data.candidates[0].content.parts[0].text;
-                    chat.removeChild(loadingBubble);
-                    addBubble(aiResponse, 'ai-bubble');
+
+                // Remove loading dots
+                const loader = document.getElementById("temp-loading");
+                if (loader) chat.removeChild(loader);
+
+                if (data.candidates && data.candidates[0].content) {
+                    const aiText = data.candidates[0].content.parts[0].text;
+                    addBubble(aiText, 'ai-bubble');
                 } else {
-                    throw new Error('No content');
+                    // Agar API se koi reply nahi aaya (Safety filter ya block)
+                    addBubble("Bhai, Google ne response filter kar diya. Kuch aur pooch ke dekho!", 'ai-bubble');
                 }
 
             } catch (error) {
-                if (chat.contains(loadingBubble)) chat.removeChild(loadingBubble);
-                addBubble("Bhai, lagta hai API Key abhi activate nahi hui ya limit cross ho gayi. Ek baar check karo!", 'ai-bubble');
-                console.error("Full Error Details:", error);
+                const loader = document.getElementById("temp-loading");
+                if (loader) chat.removeChild(loader);
+                
+                console.error("Error Details:", error);
+                addBubble("Bhai, network issue hai! Ek baar page Refresh (F5) karke try karo.", 'ai-bubble');
             } finally {
                 btn.disabled = false;
             }
@@ -127,11 +131,11 @@
         function addBubble(text, type) {
             const b = document.createElement('div');
             b.className = `bubble ${type}`;
-            // Pre-wrap text for better code display
             b.innerText = text;
             chat.appendChild(b);
             chat.scrollTop = chat.scrollHeight;
         }
+    </script>
     </script>
 </body>
 </html>
