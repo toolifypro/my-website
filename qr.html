@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus QR Studio | ToolifyPro</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+:root {
+    --primary: #6366f1;
+    --accent: #00f2ff;
+    --bg: #030712;
+    --glass: rgba(255,255,255,0.05);
+    --text: #fff;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: var(--glass);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    backdrop-filter: blur(20px);
+}
+
+input {
+    padding: 12px;
+    width: 250px;
+    border-radius: 10px;
+    border: none;
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 10px 20px;
+    background: var(--primary);
+    border: none;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#qrcode {
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>⚡ Nexus QR Studio</h2>
+
+    <input type="text" id="text" placeholder="Enter URL or text">
+
+    <br>
+    <button onclick="generateQR()">Generate</button>
+
+    <div id="qrcode"></div>
+
+    <br>
+    <button onclick="downloadQR()">Download</button>
+</div>
+
+<script>
+let qr;
+
+function generateQR() {
+    const text = document.getElementById("text").value;
+    const qrBox = document.getElementById("qrcode");
+
+    qrBox.innerHTML = "";
+
+    qr = new QRCode(qrBox, {
+        text: text,
+        width: 200,
+        height: 200
+    });
+}
+
+function downloadQR() {
+    const img = document.querySelector("#qrcode img");
+    if (!img) return alert("Generate QR first!");
+
+    const link = document.createElement("a");
+    link.href = img.src;
+    link.download = "nexus-qr.png";
+    link.click();
+}
+</script>
+
+</body>
+</html>
