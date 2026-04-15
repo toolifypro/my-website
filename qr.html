@@ -3,86 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nexus QR Studio | ToolifyPro</title>
+<title>QR Generator | ToolifyPro</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
 
 <style>
 :root {
     --primary: #6366f1;
+    --secondary: #a855f7;
     --accent: #00f2ff;
     --bg: #030712;
-    --glass: rgba(255,255,255,0.05);
-    --text: #fff;
+    --glass: rgba(255,255,255,0.03);
+    --glass-border: rgba(255,255,255,0.08);
+    --text-main: #f8fafc;
 }
 
 body {
     background: var(--bg);
-    color: var(--text);
-    font-family: sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    color: white;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
 }
 
 .container {
     background: var(--glass);
-    padding: 30px;
-    border-radius: 20px;
-    text-align: center;
-    backdrop-filter: blur(20px);
+    border:1px solid var(--glass-border);
+    padding:40px;
+    border-radius:25px;
+    text-align:center;
+    width:100%;
+    max-width:400px;
 }
 
 input {
-    padding: 12px;
-    width: 250px;
-    border-radius: 10px;
-    border: none;
-    margin-bottom: 15px;
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    margin-bottom:15px;
+    outline:none;
 }
 
 button {
-    padding: 10px 20px;
-    background: var(--primary);
-    border: none;
-    color: white;
-    border-radius: 10px;
-    cursor: pointer;
+    padding:12px 20px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    margin:5px;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:white;
 }
 
-#qrcode {
-    margin-top: 20px;
+#qr {
+    margin-top:20px;
 }
+
 </style>
 </head>
 
 <body>
 
 <div class="container">
-    <h2>⚡ Nexus QR Studio</h2>
+    <h2>QR Generator ⚡</h2>
 
     <input type="text" id="text" placeholder="Enter URL or text">
 
-    <br>
     <button onclick="generateQR()">Generate</button>
-
-    <div id="qrcode"></div>
-
-    <br>
     <button onclick="downloadQR()">Download</button>
+
+    <div id="qr"></div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
 let qr;
 
 function generateQR() {
     const text = document.getElementById("text").value;
-    const qrBox = document.getElementById("qrcode");
+    const qrDiv = document.getElementById("qr");
 
-    qrBox.innerHTML = "";
+    qrDiv.innerHTML = "";
 
-    qr = new QRCode(qrBox, {
+    qr = new QRCode(qrDiv, {
         text: text,
         width: 200,
         height: 200
@@ -90,12 +96,12 @@ function generateQR() {
 }
 
 function downloadQR() {
-    const img = document.querySelector("#qrcode img");
+    const img = document.querySelector("#qr img");
     if (!img) return alert("Generate QR first!");
 
     const link = document.createElement("a");
     link.href = img.src;
-    link.download = "nexus-qr.png";
+    link.download = "qr.png";
     link.click();
 }
 </script>
