@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen Recorder | ToolifyPro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --primary:#6366f1;
+    --secondary:#a855f7;
+    --accent:#00f2ff;
+    --bg:#030712;
+    --glass:rgba(255,255,255,0.03);
+    --glass-border:rgba(255,255,255,0.08);
+}
+
+body {
+    background:var(--bg);
+    color:white;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.container {
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    padding:40px;
+    border-radius:25px;
+    text-align:center;
+    width:100%;
+    max-width:400px;
+}
+
+video {
+    width:100%;
+    margin-top:15px;
+    border-radius:10px;
+}
+
+button {
+    padding:12px 20px;
+    margin:5px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:white;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Screen Recorder 🎥</h2>
+
+    <button onclick="startRec()">Start</button>
+    <button onclick="stopRec()">Stop</button>
+
+    <video id="preview" controls></video>
+</div>
+
+<script>
+let mediaRecorder;
+let chunks = [];
+
+async function startRec() {
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true
+    });
+
+    mediaRecorder = new MediaRecorder(stream);
+
+    mediaRecorder.ondataavailable = e => {
+        chunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: "video/webm" });
+        const url = URL.createObjectURL(blob);
+
+        const video = document.getElementById("preview");
+        video.src = url;
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "recording.webm";
+        a.click();
+    };
+
+    mediaRecorder.start();
+}
+
+function stopRec() {
+    mediaRecorder.stop();
+}
+</script>
+
+</body>
+</html>
