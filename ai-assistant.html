@@ -3,151 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus AI Pro | ToolifyPro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Nexus OS | Command Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #030712;
-            --neon-blue: #00e5ff;
-            --neon-purple: #9333ea;
-            --primary: #6366f1;
-            --glass: rgba(15, 23, 42, 0.7);
-            --glass-border: rgba(99, 102, 241, 0.2);
-            --text-main: #f8fafc;
+            --bg: #050505;
+            --neon: #00f2ff;
+            --neon-dim: rgba(0, 242, 255, 0.2);
+            --danger: #ff0055;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-
-        body { 
-            background-color: var(--bg); color: var(--text-main); min-height: 100vh; 
-            display: flex; justify-content: center; align-items: center; padding: 20px; 
+        body {
+            background-color: var(--bg);
+            color: var(--neon);
+            font-family: 'Fira Code', monospace;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             overflow: hidden;
-            background: radial-gradient(circle at top, #1e1b4b, #030712);
+            margin: 0;
         }
 
+        /* 🟢 MATRIX GRID EFFECT */
         body::before {
-            content: ""; position: absolute; width: 200%; height: 200%;
-            background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
-            background-size: 50px 50px;
-            transform: perspective(500px) rotateX(60deg) translateY(-100px);
-            opacity: 0.15; z-index: -1; animation: move 20s linear infinite;
-        }
-        @keyframes move { from { background-position: 0 0; } to { background-position: 0 500px; } }
-
-        .ai-container {
-            width: 100%; max-width: 650px; background: var(--glass); backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border); border-radius: 24px; padding: 25px; 
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(99, 102, 241, 0.2);
-            display: flex; flex-direction: column; height: 85vh;
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 10;
         }
 
-        .header { text-align: center; margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; }
-        .header h1 { 
-            font-size: 1.7rem; font-weight: 800; letter-spacing: 1px;
-            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        .terminal-box {
+            width: 90%; max-width: 800px; height: 70vh;
+            background: rgba(0, 20, 20, 0.8);
+            border: 1px solid var(--neon);
+            box-shadow: 0 0 20px var(--neon-dim), inset 0 0 10px var(--neon-dim);
+            padding: 20px; border-radius: 5px;
+            display: flex; flex-direction: column; position: relative;
         }
 
-        .chat-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 10px; margin-bottom: 15px; scroll-behavior: smooth; }
-        .chat-area::-webkit-scrollbar { width: 4px; }
-        .chat-area::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 10px; }
-
-        .bubble { max-width: 85%; padding: 12px 18px; border-radius: 18px; font-size: 0.95rem; line-height: 1.5; animation: pop 0.3s ease; word-wrap: break-word; }
-        @keyframes pop { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .header { border-bottom: 1px solid var(--neon-dim); padding-bottom: 10px; margin-bottom: 15px; font-weight: bold; }
+        .output-area { flex: 1; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; }
+        .input-line { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
         
-        .ai-bubble { background: rgba(255, 255, 255, 0.05); align-self: flex-start; border-bottom-left-radius: 4px; border-left: 3px solid var(--neon-blue); white-space: pre-wrap; }
-        .user-bubble { background: var(--primary); align-self: flex-end; border-bottom-right-radius: 4px; }
-
-        .input-box { display: flex; gap: 10px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 18px; border: 1px solid var(--glass-border); }
-        input { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 1rem; padding: 0 10px; }
-        
-        button { 
-            background: linear-gradient(135deg, var(--primary), var(--neon-purple));
-            border: none; color: white; width: 42px; height: 42px; border-radius: 50%; cursor: pointer;
+        input { 
+            background: transparent; border: none; color: var(--neon); 
+            outline: none; flex: 1; font-family: inherit; font-size: 1rem;
         }
+
+        .cursor { width: 10px; height: 20px; background: var(--neon); animation: blink 0.8s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .system-text { color: #fff; text-shadow: 0 0 5px var(--neon); }
+        .danger-text { color: var(--danger); text-shadow: 0 0 5px var(--danger); }
         
-        #loader { display: none; text-align: center; color: var(--neon-blue); font-size: 0.8rem; margin-bottom: 10px; font-weight: bold; }
+        /* 🔵 LOADING BAR */
+        .progress-container { width: 100%; height: 4px; background: #111; margin-top: 10px; display: none; }
+        .progress-bar { width: 0%; height: 100%; background: var(--neon); transition: 0.5s; }
     </style>
 </head>
 <body>
 
-    <div class="ai-container">
-        <div class="header">
-            <h1>NEXUS AI PRO</h1>
-            <p style="font-size: 0.7rem; color: #94a3b8; letter-spacing: 2px; margin-top: 5px;">CORS-SECURE ENGINE</p>
-        </div>
-
-        <div class="chat-area" id="chat">
-            <div class="bubble ai-bubble">Namaste! Main Nexus AI hoon. ToolifyPro Hub online. Poochiye?</div>
-        </div>
-
-        <div id="loader">NEURAL PROCESSING...</div>
-
-        <div class="input-box">
-            <input type="text" id="userInput" placeholder="Initialize command..." autocomplete="off">
-            <button onclick="ask()">🚀</button>
-        </div>
+<div class="terminal-box">
+    <div class="header">NEXUS COMMAND CENTER v2.0 - [STATUS: ENCRYPTED]</div>
+    
+    <div class="output-area" id="output">
+        <div class="system-text">> BOOTING NEXUS_OS... [OK]</div>
+        <div class="system-text">> ESTABLISHING SECURE PROTOCOL... [OK]</div>
+        <div class="system-text">> WELCOME BACK, OPERATOR YASH.</div>
+        <div class="system-text">> TYPE 'HELP' TO SEE AVAILABLE COMMANDS.</div>
+        <br>
     </div>
 
-    <script>
-        // Stealth Token Logic
-        const _a = "hf_wRTVNWV";
-        const _b = "onNZueIaQKdGJ";
-        const _c = "htrgHlQHHEzdTG";
-        const HF_TOKEN = _a + _b + _c; 
+    <div class="progress-container" id="loaderContainer"><div class="progress-bar" id="progressBar"></div></div>
 
-        async function ask() {
-            const input = document.getElementById('userInput');
-            const chat = document.getElementById('chat');
-            const loader = document.getElementById('loader');
-            const prompt = input.value.trim();
+    <div class="input-line">
+        <span>[yash@nexus]:~$</span>
+        <input type="text" id="commandInput" autofocus spellcheck="false">
+    </div>
+</div>
 
-            if (!prompt) return;
+<script>
+    const output = document.getElementById('output');
+    const input = document.getElementById('commandInput');
+    const loaderCont = document.getElementById('loaderContainer');
+    const progBar = document.getElementById('progressBar');
 
-            addBubble(prompt, 'user-bubble');
-            input.value = "";
-            loader.style.display = "block";
+    const commands = {
+        'help': 'Available: help, about, status, clear, override, hack, social',
+        'about': 'Nexus AI Pro: A futuristic interface designed by Yash Raj Sharma.',
+        'status': 'System: Optimal | Neural Link: Active | CORS: Bypassed via Stealth',
+        'social': 'GitHub: ToolifyPro | Instagram: @yash_sharma',
+        'hack': 'Scanning nearby networks... [REDACTED]... Just kidding, I am a good AI.',
+        'override': 'INITIATING SYSTEM OVERRIDE... ACCESS GRANTED.'
+    };
 
-            try {
-                // Bina Proxy ke try kar rahe hain, agar ye fail hua toh proxy wala option denge
-                const response = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${HF_TOKEN}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ 
-                        inputs: `<s>[INST] ${prompt} [/INST]`,
-                        parameters: { max_new_tokens: 500, return_full_text: false }
-                    })
-                });
+    input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            const cmd = input.value.toLowerCase().trim();
+            addLine(`[yash@nexus]:~$ ${cmd}`, 'neon');
+            input.value = '';
 
-                const data = await response.json();
-                loader.style.display = "none";
-
-                if (response.ok) {
-                    const aiText = data[0].generated_text || "Bhai, reply khali aaya!";
-                    addBubble(aiText, 'ai-bubble');
-                } else {
-                    addBubble("Bhai, CORS error hai. Ek baar 'https://cors-anywhere.herokuapp.com/corsdemo' par jaake button daba do!", 'ai-bubble');
-                }
-
-            } catch (error) {
-                loader.style.display = "none";
-                addBubble("System Error! Browser ne request block kar di hai. Check Console.", 'ai-bubble');
+            if (cmd === 'clear') {
+                output.innerHTML = '';
+            } else if (commands[cmd]) {
+                processCommand(commands[cmd]);
+            } else {
+                addLine(`Error: Command '${cmd}' not recognized. Try 'help'.`, 'danger-text');
             }
         }
+    });
 
-        function addBubble(text, type) {
-            const b = document.createElement('div');
-            b.className = `bubble ${type}`;
-            b.innerText = text;
-            const chatBox = document.getElementById('chat');
-            chatBox.appendChild(b);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+    function addLine(text, className) {
+        const div = document.createElement('div');
+        div.className = className || '';
+        div.innerHTML = `> ${text}`;
+        output.appendChild(div);
+        output.scrollTop = output.scrollHeight;
+    }
 
-        document.getElementById('userInput').addEventListener("keypress", (e) => { if (e.key === "Enter") ask(); });
-    </script>
+    function processCommand(response) {
+        loaderCont.style.display = 'block';
+        let width = 0;
+        const interval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(interval);
+                loaderCont.style.display = 'none';
+                progBar.style.width = '0%';
+                addLine(response, 'system-text');
+            } else {
+                width += 10;
+                progBar.style.width = width + '%';
+            }
+        }, 50);
+    }
+</script>
+
 </body>
 </html>
