@@ -72,7 +72,10 @@
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
+   document.addEventListener("DOMContentLoaded", () => {
+
     document.getElementById('userInput').addEventListener("keypress", (e) => {
         if (e.key === "Enter") ask();
+        
     });
 </script>
