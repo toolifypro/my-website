@@ -1,110 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QR Generator | ToolifyPro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus QR | ToolifyPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #a855f7; --accent: #00f2ff;
+            --bg: #030712; --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+        body {
+            background: var(--bg);
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; margin: 0;
+        }
 
-<style>
-:root {
-    --primary: #6366f1;
-    --secondary: #a855f7;
-    --accent: #00f2ff;
-    --bg: #030712;
-    --glass: rgba(255,255,255,0.03);
-    --glass-border: rgba(255,255,255,0.08);
-    --text-main: #f8fafc;
-}
+        .container {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            padding: 40px; border-radius: 28px;
+            text-align: center; width: 90%; max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
 
-body {
-    background: var(--bg);
-    color: white;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-}
+        h2 { font-weight: 800; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 25px; }
 
-.container {
-    background: var(--glass);
-    border:1px solid var(--glass-border);
-    padding:40px;
-    border-radius:25px;
-    text-align:center;
-    width:100%;
-    max-width:400px;
-}
+        input {
+            width: 85%; padding: 14px; border-radius: 12px; border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.05); color: white; outline: none;
+            transition: 0.3s; margin-bottom: 20px;
+        }
 
-input {
-    width:100%;
-    padding:12px;
-    border-radius:10px;
-    border:none;
-    margin-bottom:15px;
-    outline:none;
-}
+        input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2); }
 
-button {
-    padding:12px 20px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    margin:5px;
-    background:linear-gradient(135deg,var(--primary),var(--secondary));
-    color:white;
-}
+        .btns { display: flex; gap: 10px; justify-content: center; }
 
-#qr {
-    margin-top:20px;
-}
+        button {
+            padding: 12px 20px; border: none; border-radius: 12px; cursor: pointer;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; font-weight: 600; transition: 0.3s;
+        }
 
-</style>
+        button:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
+
+        button.sec { background: transparent; border: 1px solid var(--glass-border); }
+
+        #qr { 
+            margin-top: 25px; padding: 15px; background: white; 
+            display: inline-block; border-radius: 15px; 
+        }
+    </style>
 </head>
-
 <body>
+    <div class="container">
+        <h2>QR GENERATOR ⚡</h2>
+        <input type="text" id="text" placeholder="Paste link or text...">
+        <div class="btns">
+            <button onclick="generateQR()">Generate</button>
+            <button class="sec" onclick="downloadQR()">Download</button>
+        </div>
+        <div id="qr"></div>
+    </div>
 
-<div class="container">
-    <h2>QR Generator ⚡</h2>
-
-    <input type="text" id="text" placeholder="Enter URL or text">
-
-    <button onclick="generateQR()">Generate</button>
-    <button onclick="downloadQR()">Download</button>
-
-    <div id="qr"></div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-<script>
-let qr;
-
-function generateQR() {
-    const text = document.getElementById("text").value;
-    const qrDiv = document.getElementById("qr");
-
-    qrDiv.innerHTML = "";
-
-    qr = new QRCode(qrDiv, {
-        text: text,
-        width: 200,
-        height: 200
-    });
-}
-
-function downloadQR() {
-    const img = document.querySelector("#qr img");
-    if (!img) return alert("Generate QR first!");
-
-    const link = document.createElement("a");
-    link.href = img.src;
-    link.download = "qr.png";
-    link.click();
-}
-</script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        let qr;
+        function generateQR() {
+            const text = document.getElementById("text").value;
+            const qrDiv = document.getElementById("qr");
+            if(!text) return;
+            qrDiv.innerHTML = "";
+            qr = new QRCode(qrDiv, { text: text, width: 180, height: 180 });
+        }
+        function downloadQR() {
+            const img = document.querySelector("#qr img");
+            if (!img) return alert("Pehle generate toh karle bhai!");
+            const link = document.createElement("a");
+            link.href = img.src; link.download = "Nexus_QR.png"; link.click();
+        }
+    </script>
 </body>
 </html>
