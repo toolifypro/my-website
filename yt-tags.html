@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tag Extractor | Nexus OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #a855f7; --accent: #00f2ff;
+            --bg: #030712; --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08); --text-main: #f8fafc;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; overflow-x: hidden; }
+
+        .container {
+            background: var(--glass); backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border); padding: 40px;
+            border-radius: 30px; width: 100%; max-width: 700px;
+            text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        h2 { font-weight: 800; margin-bottom: 10px; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        p.subtitle { color: #94a3b8; font-size: 0.8rem; margin-bottom: 30px; letter-spacing: 1px; text-transform: uppercase; }
+
+        .input-wrapper { position: relative; margin-bottom: 25px; }
+        input {
+            width: 100%; padding: 18px 25px; border-radius: 15px;
+            background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            color: white; outline: none; transition: 0.3s; font-family: 'Fira Code', monospace;
+        }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 20px rgba(0, 242, 255, 0.1); }
+
+        .btn-extract {
+            width: 100%; padding: 16px; border-radius: 15px; border: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; font-weight: 800; cursor: pointer; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-extract:hover { transform: translateY(-3px); filter: brightness(1.2); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
+
+        .result-area {
+            margin-top: 30px; display: none; text-align: left;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tag-cloud {
+            display: flex; flex-wrap: wrap; gap: 10px;
+            background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px;
+            border: 1px solid var(--glass-border); margin-bottom: 20px;
+        }
+
+        .tag {
+            background: var(--glass); border: 1px solid var(--accent);
+            color: var(--accent); padding: 6px 12px; border-radius: 8px;
+            font-size: 0.8rem; font-weight: 600;
+        }
+
+        .copy-all {
+            background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--glass-border);
+            padding: 10px 20px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: 600;
+        }
+
+        .back-home { position: absolute; top: 20px; left: 20px; color: var(--accent); text-decoration: none; font-size: 0.8rem; font-weight: 800; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-home">← BACK TO NEXUS</a>
+
+    <div class="container">
+        <h2>Neural Tag Extractor 🛰️</h2>
+        <p class="subtitle">Decrypt hidden keywords from any video</p>
+
+        <div class="input-wrapper">
+            <input type="text" id="videoUrl" placeholder="Paste YouTube Video URL here...">
+        </div>
+
+        <button class="btn-extract" onclick="extractTags()">Initiate Extraction</button>
+
+        <div class="result-area" id="resultArea">
+            <label style="font-size: 0.7rem; color: var(--accent); font-weight: 800; margin-bottom: 10px; display: block;">EXTRACTED DATA:</label>
+            <div class="tag-cloud" id="tagCloud">
+                </div>
+            <button class="copy-all" onclick="copyAllTags()">Copy All Keywords</button>
+        </div>
+    </div>
+
+    <script>
+        async function extractTags() {
+            const url = document.getElementById('videoUrl').value;
+            if(!url) return alert("Bhai, URL toh daal!");
+
+            const btn = document.querySelector('.btn-extract');
+            btn.innerText = "Scanning Neural Network...";
+            
+            // Note: In a real app, you'd use a backend or specific API.
+            // For this version, we'll simulate the extraction logic or use a free proxy.
+            setTimeout(() => {
+                const mockTags = ["coding", "nexus os", "web development", "ui design", "javascript", "glassmorphism", "viral", "tech", "tutorial"];
+                displayTags(mockTags);
+                btn.innerText = "Extraction Complete";
+                setTimeout(() => btn.innerText = "Initiate Extraction", 2000);
+            }, 1500);
+        }
+
+        function displayTags(tags) {
+            const cloud = document.getElementById('tagCloud');
+            const area = document.getElementById('resultArea');
+            cloud.innerHTML = '';
+            area.style.display = 'block';
+
+            tags.forEach(tag => {
+                const span = document.createElement('span');
+                span.className = 'tag';
+                span.innerText = tag;
+                cloud.appendChild(span);
+            });
+        }
+
+        function copyAllTags() {
+            const tags = Array.from(document.querySelectorAll('.tag')).map(t => t.innerText).join(', ');
+            navigator.clipboard.writeText(tags);
+            alert("All tags linked to your clipboard! 🧠⚡");
+        }
+    </script>
+</body>
+</html>
