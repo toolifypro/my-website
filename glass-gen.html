@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glass Engine | ToolifyPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1; --accent: #00f2ff;
+            --bg: #030712; --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { 
+            background: var(--bg); 
+            background-image: radial-gradient(circle at 20% 30%, #1e1b4b 0%, transparent 40%), 
+                              radial-gradient(circle at 80% 70%, #312e81 0%, transparent 40%);
+            color: #fff; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;
+        }
+
+        .container {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
+            background: var(--glass); backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); padding: 40px;
+            border-radius: 30px; width: 100%; max-width: 900px;
+        }
+
+        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
+
+        .controls { display: flex; flex-direction: column; gap: 20px; }
+        label { font-size: 0.7rem; color: var(--accent); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        
+        input[type="range"] { 
+            width: 100%; accent-color: var(--accent); cursor: pointer; 
+            background: rgba(255,255,255,0.1); border-radius: 10px; height: 6px;
+        }
+
+        /* LIVE PREVIEW BOX */
+        .preview-area {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop') center/cover;
+            border-radius: 20px; min-height: 300px; position: relative; overflow: hidden;
+        }
+
+        #glassPreview {
+            width: 80%; height: 60%; border-radius: 20px;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: 800; font-size: 1.2rem; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            transition: 0.1s;
+        }
+
+        .code-box {
+            grid-column: 1 / -1; background: #000; padding: 20px; border-radius: 15px;
+            font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #00f2ff;
+            border: 1px solid var(--glass-border); position: relative;
+        }
+
+        .copy-btn {
+            position: absolute; right: 15px; top: 15px; background: var(--primary);
+            color: white; border: none; padding: 8px 15px; border-radius: 8px;
+            font-size: 0.7rem; font-weight: 800; cursor: pointer;
+        }
+
+        .back-home { position: absolute; top: 20px; left: 20px; color: var(--accent); text-decoration: none; font-size: 0.8rem; font-weight: 800; }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-home">← BACK TO NEXUS</a>
+
+    <div class="container">
+        <div class="controls">
+            <h2 style="margin-bottom: 10px;">Glass Engine 💎</h2>
+            
+            <div>
+                <label>Transparency</label>
+                <input type="range" id="opacity" min="0" max="1" step="0.01" value="0.1">
+            </div>
+
+            <div>
+                <label>Blur Intensity</label>
+                <input type="range" id="blur" min="0" max="40" step="1" value="15">
+            </div>
+
+            <div>
+                <label>Border Opacity</label>
+                <input type="range" id="border" min="0" max="1" step="0.01" value="0.1">
+            </div>
+        </div>
+
+        <div class="preview-area">
+            <div id="glassPreview">PREVIEW</div>
+        </div>
+
+        <div class="code-box">
+            <button class="copy-btn" onclick="copyCode()">COPY CSS</button>
+            <pre id="codeOutput">
+background: rgba(255, 255, 255, 0.1);
+backdrop-filter: blur(15px);
+border: 1px solid rgba(255, 255, 255, 0.1);
+            </pre>
+        </div>
+    </div>
+
+    <script>
+        const opacityInput = document.getElementById('opacity');
+        const blurInput = document.getElementById('blur');
+        const borderInput = document.getElementById('border');
+        const preview = document.getElementById('glassPreview');
+        const output = document.getElementById('codeOutput');
+
+        function updateGlass() {
+            const o = opacityInput.value;
+            const b = blurInput.value;
+            const br = borderInput.value;
+
+            const style = `background: rgba(255, 255, 255, ${o});\nbackdrop-filter: blur(${b}px);\n-webkit-backdrop-filter: blur(${b}px);\nborder: 1px solid rgba(255, 255, 255, ${br});\nborder-radius: 20px;`;
+            
+            preview.style.background = `rgba(255, 255, 255, ${o})`;
+            preview.style.backdropFilter = `blur(${b}px)`;
+            preview.style.border = `1px solid rgba(255, 255, 255, ${br})`;
+            
+            output.innerText = style;
+        }
+
+        [opacityInput, blurInput, borderInput].forEach(input => {
+            input.addEventListener('input', updateGlass);
+        });
+
+        function copyCode() {
+            navigator.clipboard.writeText(output.innerText);
+            alert("CSS Linked to Neural Link! ⚡");
+        }
+        
+        updateGlass();
+    </script>
+</body>
+</html>
