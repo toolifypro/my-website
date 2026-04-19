@@ -46,23 +46,28 @@
         /* Hero Section */
         .hero { text-align: center; padding: 60px 10% 20px; }
         .hero h1 { font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 800; letter-spacing: -2px; margin-bottom: 15px; }
+        .hero p { color: var(--text-dim); margin-bottom: 10px; }
+        
         .search-box { margin: 30px auto; max-width: 500px; }
         .search-box input {
             padding: 15px 25px; width: 100%; border-radius: 30px; border: 1px solid var(--glass-border);
             background: rgba(255, 255, 255, 0.05); color: white; outline: none; text-align: center; transition: 0.3s;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
         }
-        .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 20px rgba(0, 242, 255, 0.1); }
+        .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 25px rgba(0, 242, 255, 0.15); }
 
         /* Tools Grid */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; padding: 40px 10%; max-width: 1400px; margin: 0 auto; }
         .card {
             background: var(--glass); border: 1px solid var(--glass-border); border-radius: 24px;
-            padding: 40px 30px; text-decoration: none; color: inherit; transition: 0.4s;
+            padding: 35px 25px; text-decoration: none; color: inherit; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-align: center; display: flex; flex-direction: column; align-items: center;
+            backdrop-filter: blur(5px);
         }
-        .card:hover { transform: translateY(-10px); background: rgba(255, 255, 255, 0.07); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .icon { font-size: 3rem; margin-bottom: 20px; }
-        .card h3 { font-size: 1.3rem; color: #fff; margin-bottom: 10px; }
+        .card:hover { transform: translateY(-12px) scale(1.02); background: rgba(255, 255, 255, 0.07); border-color: var(--accent); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+        .icon { font-size: 3rem; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); }
+        .card h3 { font-size: 1.3rem; color: #fff; margin-bottom: 8px; }
+        .card p { font-size: 0.75rem; color: var(--text-dim); line-height: 1.4; }
 
         /* Footer Section */
         .nexus-footer-section { padding: 60px 10%; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
@@ -90,7 +95,7 @@
             <div class="brand-icon">T</div>
             <div class="logo-text">ToolifyPro</div>
         </a>
-        <div style="font-size: 0.7rem; color: var(--accent); font-weight: 800; border: 1px solid var(--accent); padding: 4px 10px; border-radius: 5px;">NEXUS OS v2.0</div>
+        <div style="font-size: 0.7rem; color: var(--accent); font-weight: 800; border: 1px solid var(--accent); padding: 4px 10px; border-radius: 5px; letter-spacing: 1px;">NEXUS OS v2.0</div>
     </header>
 
     <div class="system-widget">
@@ -107,21 +112,53 @@
     </section>
 
     <main class="grid" id="toolGrid">
-        <a href="calculator.html" class="card"><span class="icon">🧮</span><h3>Calculator</h3></a>
-        <a href="age.html" class="card"><span class="icon">📅</span><h3>Age Calc</h3></a>
-        <a href="password.html" class="card"><span class="icon">🔐</span><h3>Password</h3></a>
-        <a href="ai-assistant.html" class="card"><span class="icon">🤖</span><h3>Nexus AI</h3></a>
+        <a href="calculator.html" class="card">
+            <span class="icon">🧮</span>
+            <h3>Calculator</h3>
+            <p>Advanced mathematical processing unit.</p>
+        </a>
+        <a href="age.html" class="card">
+            <span class="icon">📅</span>
+            <h3>Age Calc</h3>
+            <p>Precise chronological age tracker.</p>
+        </a>
+        <a href="password.html" class="card">
+            <span class="icon">🔐</span>
+            <h3>Security</h3>
+            <p>Military-grade password generation.</p>
+        </a>
+        <a href="ai-assistant.html" class="card">
+            <span class="icon">🤖</span>
+            <h3>Nexus AI</h3>
+            <p>Neural link for intelligent assistance.</p>
+        </a>
         
-        <a href="qr.html" class="card"><span class="icon">📱</span><h3>QR Generator</h3></a>
-        <a href="recorder.html" class="card"><span class="icon">🎥</span><h3>Screen Recorder</h3></a>
+        <a href="qr.html" class="card">
+            <span class="icon">📱</span>
+            <h3>QR Forge</h3>
+            <p>Instant encrypted QR code generation.</p>
+        </a>
+        <a href="recorder.html" class="card">
+            <span class="icon">🎥</span>
+            <h3>Capture</h3>
+            <p>High-fidelity screen recording tool.</p>
+        </a>
 
-        <a href="anime-prompt.html" class="card"><span class="icon">🎨</span><h3>Prompt Builder</h3></a>
-        <a href="glass-gen.html" class="card"><span class="icon">🎨</span><h3>Prompt Builder</h3></a>
+        <a href="anime-prompt.html" class="card">
+            <span class="icon">⚔️</span>
+            <h3>Anime Art</h3>
+            <p>Forge high-end AI art prompts.</p>
+        </a>
+        <a href="glass-gen.html" class="card">
+            <span class="icon">💎</span>
+            <h3>Glass Engine</h3>
+            <p>Modern glassmorphism CSS generator.</p>
+        </a>
     </main>
 
     <section class="nexus-footer-section">
         <div class="footer-box">
-            <h2 class="box-title">Capabilities</h2>
+            <h2 class="box-title">System Specs</h2>
             <p style="font-size:0.8rem;">HTML/CSS - 95%</p><div class="progress-bg"><div class="progress-fill" style="width: 95%;"></div></div>
             <p style="font-size:0.8rem;">JAVASCRIPT - 80%</p><div class="progress-bg"><div class="progress-fill" style="width: 80%;"></div></div>
             <p style="font-size:0.8rem;">UI/UX DESIGN - 85%</p><div class="progress-bg"><div class="progress-fill" style="width: 85%;"></div></div>
