@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Prompt Architect | ToolifyPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #a855f7; --accent: #00f2ff;
+            --bg: #030712; --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08); --text-main: #f8fafc;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+
+        /* Nexus Glass Container */
+        .container {
+            background: var(--glass); backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); padding: 40px;
+            border-radius: 30px; width: 90%; max-width: 600px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center;
+        }
+
+        h2 { font-weight: 800; margin-bottom: 20px; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { font-size: 0.8rem; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+        select, input {
+            width: 100%; padding: 15px; margin-top: 8px; border-radius: 12px;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            color: white; outline: none; transition: 0.3s;
+        }
+
+        .prompt-result {
+            background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px;
+            margin-top: 25px; border: 1px dashed var(--accent); min-height: 80px;
+            font-family: 'Fira Code', monospace; font-size: 0.9rem; position: relative;
+        }
+
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        button {
+            flex: 1; padding: 15px; border-radius: 12px; border: none;
+            font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase;
+        }
+
+        .gen-btn { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+        .copy-btn { background: var(--glass); color: white; border: 1px solid var(--glass-border); }
+        button:hover { transform: translateY(-3px); filter: brightness(1.2); }
+
+        .back-home { position: absolute; top: 20px; left: 20px; color: var(--accent); text-decoration: none; font-size: 0.8rem; font-weight: 800; }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-home">← BACK TO NEXUS</a>
+
+    <div class="container">
+        <h2>Prompt Architect ⚔️</h2>
+        
+        <div class="input-group">
+            <label>Character / Subject</label>
+            <input type="text" id="subject" placeholder="e.g. Saber, Naruto, Cyberpunk Girl...">
+        </div>
+
+        <div class="input-group">
+            <label>Vibe / Style</label>
+            <select id="vibe">
+                <option value="cinematic dark fantasy">Dark Fantasy (Heaven's Feel)</option>
+                <option value="cyberpunk futuristic neon">Cyberpunk 2077</option>
+                <option value="shonen high energy battle">Shonen Action</option>
+                <option value="studio ghibli peaceful">Studio Ghibli (Cozy)</option>
+                <option value="90s retro anime style">90s Retro (Sailor Moon/Eva)</option>
+            </select>
+        </div>
+
+        <div class="btn-group">
+            <button class="gen-btn" onclick="forgePrompt()">Forge Prompt</button>
+            <button class="copy-btn" onclick="copyPrompt()">Copy Code</button>
+        </div>
+
+        <div class="prompt-result" id="result">
+            Your master prompt will appear here...
+        </div>
+    </div>
+
+    <script>
+        function forgePrompt() {
+            const subject = document.getElementById('subject').value || "Mysterious Warrior";
+            const vibe = document.getElementById('vibe').value;
+            const modifiers = [
+                "8k resolution", "unreal engine 5 render", "glowing particle effects", 
+                "intricate detail", "masterpiece", "dramatic lighting", "ufotable style"
+            ];
+            
+            let finalPrompt = `${vibe}, ${subject}, ${modifiers.sort(() => 0.5 - Math.random()).slice(0, 4).join(', ')}`;
+            
+            document.getElementById('result').innerText = finalPrompt;
+        }
+
+        function copyPrompt() {
+            const text = document.getElementById('result').innerText;
+            navigator.clipboard.writeText(text);
+            alert("Prompt copied to Neural Link! 🧠⚡");
+        }
+    </script>
+</body>
+</html>
