@@ -1,108 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Screen Recorder | ToolifyPro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Recorder | ToolifyPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #a855f7; --accent: #00f2ff;
+            --bg: #030712; --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+        body {
+            background: var(--bg); color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; margin: 0;
+        }
 
-<style>
-:root {
-    --primary:#6366f1;
-    --secondary:#a855f7;
-    --accent:#00f2ff;
-    --bg:#030712;
-    --glass:rgba(255,255,255,0.03);
-    --glass-border:rgba(255,255,255,0.08);
-}
+        .container {
+            background: var(--glass); backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); padding: 40px;
+            border-radius: 28px; text-align: center; width: 90%; max-width: 450px;
+        }
 
-body {
-    background:var(--bg);
-    color:white;
-    font-family:'Plus Jakarta Sans',sans-serif;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-}
+        h2 { font-weight: 800; background: linear-gradient(to right, #fff, var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-.container {
-    background:var(--glass);
-    border:1px solid var(--glass-border);
-    padding:40px;
-    border-radius:25px;
-    text-align:center;
-    width:100%;
-    max-width:400px;
-}
+        .status { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
 
-video {
-    width:100%;
-    margin-top:15px;
-    border-radius:10px;
-}
+        button {
+            padding: 14px 25px; border: none; border-radius: 12px; cursor: pointer;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; font-weight: 600; transition: 0.3s; margin: 5px;
+        }
 
-button {
-    padding:12px 20px;
-    margin:5px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    background:linear-gradient(135deg,var(--primary),var(--secondary));
-    color:white;
-}
+        button:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
 
-</style>
+        #stopBtn { background: #ef4444; display: none; }
+
+        video {
+            width: 100%; border-radius: 15px; margin-top: 20px;
+            border: 2px solid var(--glass-border); display: none;
+        }
+        video.active { display: block; border-color: var(--accent); }
+    </style>
 </head>
-
 <body>
+    <div class="container">
+        <h2>SCREEN RECORDER 🎥</h2>
+        <p class="status">Capture in 4K Nexus Quality</p>
+        <button id="startBtn" onclick="startRec()">Start Recording</button>
+        <button id="stopBtn" onclick="stopRec()">Stop & Save</button>
+        <video id="preview" controls></video>
+    </div>
 
-<div class="container">
-    <h2>Screen Recorder 🎥</h2>
+    <script>
+        let mediaRecorder; let chunks = [];
+        async function startRec() {
+            const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('stopBtn').style.display = 'inline-block';
 
-    <button onclick="startRec()">Start</button>
-    <button onclick="stopRec()">Stop</button>
+            mediaRecorder.ondataavailable = e => chunks.push(e.data);
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(chunks, { type: "video/webm" });
+                const url = URL.createObjectURL(blob);
+                const video = document.getElementById("preview");
+                video.src = url; video.classList.add('active');
+                
+                document.getElementById('startBtn').style.display = 'inline-block';
+                document.getElementById('stopBtn').style.display = 'none';
 
-    <video id="preview" controls></video>
-</div>
-
-<script>
-let mediaRecorder;
-let chunks = [];
-
-async function startRec() {
-    const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
-        audio: true
-    });
-
-    mediaRecorder = new MediaRecorder(stream);
-
-    mediaRecorder.ondataavailable = e => {
-        chunks.push(e.data);
-    };
-
-    mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: "video/webm" });
-        const url = URL.createObjectURL(blob);
-
-        const video = document.getElementById("preview");
-        video.src = url;
-
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "recording.webm";
-        a.click();
-    };
-
-    mediaRecorder.start();
-}
-
-function stopRec() {
-    mediaRecorder.stop();
-}
-</script>
-
+                const a = document.createElement("a");
+                a.href = url; a.download = "Nexus_Rec.webm"; a.click();
+                chunks = [];
+            };
+            mediaRecorder.start();
+        }
+        function stopRec() { mediaRecorder.stop(); }
+    </script>
 </body>
 </html>
