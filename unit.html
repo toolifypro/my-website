@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter | Nexus OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #6366f1; --secondary: #a855f7; --accent: #00f2ff; --bg: #030712; --glass: rgba(255,255,255,0.03); --glass-border: rgba(255,255,255,0.08); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: white; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        
+        .tool-container { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 40px; border-radius: 28px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7); }
+        h2 { font-weight: 800; margin-bottom: 25px; background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input, select { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 14px; border-radius: 12px; color: white; outline: none; transition: 0.3s; }
+        input:focus, select:focus { border-color: var(--accent); }
+        select option { background: var(--bg); color: white; }
+        button { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
+        #result { margin-top: 25px; font-size: 1.5rem; color: var(--accent); font-weight: 800; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <canvas id="particleCanvas"></canvas>
+    <div class="tool-container">
+        <h2>UNIT CONVERTER ⚖️</h2>
+        <div class="input-group">
+            <input type="number" id="unitInput" placeholder="Enter Value">
+            <select id="unitType">
+                <option value="mToKm">Meters to KM</option>
+                <option value="kmToM">KM to Meters</option>
+                <option value="kgToLb">KG to Lbs</option>
+                <option value="lbToKg">Lbs to KG</option>
+            </select>
+        </div>
+        <button onclick="convert()">Calculate</button>
+        <div id="result">--</div>
+    </div>
+
+    <script>
+        // Particles
+        const cvs=document.getElementById('particleCanvas'), ctx=cvs.getContext('2d'); let pts=[]; function init(){cvs.width=innerWidth;cvs.height=innerHeight;} window.addEventListener('resize',init);init(); class P{constructor(){this.x=Math.random()*cvs.width;this.y=Math.random()*cvs.height;this.vx=(Math.random()-0.5)*0.5;this.vy=(Math.random()-0.5)*0.5;this.s=Math.random()*1.5;}draw(){ctx.fillStyle='rgba(0,242,255,0.2)';ctx.beginPath();ctx.arc(this.x,this.y,this.s,0,Math.PI*2);ctx.fill();}move(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>cvs.width)this.vx*=-1;if(this.y<0||this.y>cvs.height)this.vy*=-1;}} for(let i=0;i<100;i++)pts.push(new P()); function anim(){ctx.clearRect(0,0,cvs.width,cvs.height);pts.forEach(p=>{p.move();p.draw();});requestAnimationFrame(anim);} anim();
+
+        // Convert Logic
+        function convert() {
+            const val = parseFloat(document.getElementById('unitInput').value);
+            const type = document.getElementById('unitType').value;
+            if(isNaN(val)) return document.getElementById('result').innerText = "Enter Number!";
+            let res = 0, suffix = "";
+            if(type === "mToKm") { res = val/1000; suffix = " KM"; }
+            else if(type === "kmToM") { res = val*1000; suffix = " M"; }
+            else if(type === "kgToLb") { res = (val*2.20462).toFixed(2); suffix = " Lbs"; }
+            else if(type === "lbToKg") { res = (val/2.20462).toFixed(2); suffix = " KG"; }
+            document.getElementById('result').innerText = res + suffix;
+        }
+    </script>
+</body>
+</html>
