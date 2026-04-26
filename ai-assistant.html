@@ -180,11 +180,11 @@ async function callAI(prompt) {
         const data = await res.json();
         setLoader(false);
 
-        if (data.reply) {
-            addLine("[AI]: " + data.reply);
-        } else if (data.error) {
-            addLine("ERROR: " + data.error, "danger-text");
-            console.log(data);
+     if (data.reply) {
+    addLine(`[NEXUS_AI]: ${data.reply}`, 'system-text');
+} else if (data.error) {
+    addLine(`ERROR: ${data.error}`, 'danger-text');
+}
         } else {
             addLine("Unknown response", "danger-text");
         }
