@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- ✅ GOOGLE ANALYTICS (UNCHANGED) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-87V4WX8GHQ"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -12,11 +11,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- ✅ SEO BOOST -->
     <title>Nexus AI Terminal | Free Online AI Command Interface</title>
-    <meta name="description" content="Use Nexus AI Terminal - a futuristic command-line AI assistant powered by Gemini. Ask anything, run commands, and explore tools instantly.">
-
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&display=swap" rel="stylesheet">
     
     <style>
@@ -27,7 +22,6 @@
             --danger: #ff0055;
             --system: #ffffff;
         }
-
         body {
             background-color: var(--bg);
             color: var(--neon);
@@ -40,7 +34,6 @@
             margin: 0;
             position: relative;
         }
-
         body::before {
             content: "";
             position: absolute;
@@ -50,7 +43,6 @@
             background-size: 100% 2px, 3px 100%;
             pointer-events: none;
         }
-
         .terminal-box {
             width: 90%; max-width: 850px; height: 75vh;
             background: rgba(0, 10, 10, 0.9);
@@ -61,7 +53,6 @@
             display: flex;
             flex-direction: column;
         }
-
         .header {
             border-bottom: 1px solid var(--neon-dim);
             padding-bottom: 10px;
@@ -69,14 +60,12 @@
             font-size: 0.8rem;
             letter-spacing: 2px;
         }
-
         .output-area {
             flex: 1;
             overflow-y: auto;
             font-size: 0.95rem;
             line-height: 1.6;
         }
-
         .input-line {
             display: flex;
             gap: 10px;
@@ -84,7 +73,6 @@
             border-top: 1px solid var(--neon-dim);
             padding-top: 10px;
         }
-
         input {
             background: transparent;
             border: none;
@@ -92,39 +80,33 @@
             outline: none;
             flex: 1;
         }
-
         .system-text { color: var(--system); }
         .danger-text { color: var(--danger); }
-
         .progress-container {
             width: 100%; height: 2px;
             background: #111;
             display: none;
         }
-
         .progress-bar {
             width: 0%;
             height: 100%;
             background: var(--neon);
+            transition: width 0.3s ease;
         }
     </style>
 </head>
-
 <body>
 
 <div class="terminal-box">
     <div class="header">NEXUS COMMAND CENTER - AI TERMINAL</div>
-
     <div class="output-area" id="output">
         <div class="system-text">> System Ready...</div>
         <div class="system-text">> Ask anything or type HELP</div>
         <br>
     </div>
-
     <div class="progress-container" id="loaderContainer">
         <div class="progress-bar" id="progressBar"></div>
     </div>
-
     <div class="input-line">
         <span>[user@nexus]:~$</span>
         <input type="text" id="commandInput" autofocus>
@@ -180,13 +162,13 @@ async function callAI(prompt) {
         const data = await res.json();
         setLoader(false);
 
-     if (data.reply) {
-    addLine(`[NEXUS_AI]: ${data.reply}`, 'system-text');
-} else if (data.error) {
-    addLine(`ERROR: ${data.error}`, 'danger-text');
-}
+        // --- AB LOGIC EK DUM SAHI HAI ---
+        if (data.reply) {
+            addLine(`[NEXUS_AI]: ${data.reply}`, 'system-text');
+        } else if (data.error) {
+            addLine(`ERROR: ${data.error}`, 'danger-text');
         } else {
-            addLine("Unknown response", "danger-text");
+            addLine("Unexpected response format.", "danger-text");
         }
 
     } catch (err) {
