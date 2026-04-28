@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus Anime Finder</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+
+<style>
+body {
+    background: #050505;
+    color: #00f2ff;
+    font-family: 'Fira Code', monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.terminal {
+    width: 90%;
+    max-width: 800px;
+    height: 80vh;
+    border: 1px solid #00f2ff;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0,255,255,0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.output {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.input-line {
+    display: flex;
+    gap: 10px;
+}
+
+input {
+    background: transparent;
+    border: none;
+    color: #00f2ff;
+    outline: none;
+    width: 100%;
+}
+
+.result {
+    margin-top: 10px;
+}
+
+a {
+    color: #00f2ff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="terminal">
+    <div class="output" id="output">
+        <p>> System Ready...</p>
+        <p>> Type anime name</p>
+    </div>
+
+    <div class="input-line">
+        <span>>></span>
+        <input id="input" placeholder="naruto..." />
+    </div>
+</div>
+
+<script>
+const input = document.getElementById("input");
+const output = document.getElementById("output");
+
+input.addEventListener("keypress", async (e) => {
+    if (e.key === "Enter") {
+        const query = input.value;
+        input.value = "";
+
+        addLine("> Searching: " + query);
+
+        const res = await fetch(`https://your-worker-url?q=${query}`);
+        const data = await res.json();
+
+        showResults(data.results);
+    }
+});
+
+function addLine(text) {
+    const p = document.createElement("p");
+    p.innerText = text;
+    output.appendChild(p);
+    output.scrollTop = output.scrollHeight;
+}
+
+function showResults(results) {
+    results.forEach(anime => {
+        const div = document.createElement("div");
+        div.className = "result";
+
+        div.innerHTML = `
+            > ${anime.title}  
+            [Dub: ${anime.isDub ? "YES" : "NO"} | Hindi: ${anime.hindi ? "YES" : "NO"}]  
+            <a href="${anime.link}" target="_blank">Watch</a>
+        `;
+
+        output.appendChild(div);
+    });
+}
+</script>
+
+</body>
+</html>
