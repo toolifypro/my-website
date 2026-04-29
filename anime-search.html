@@ -215,173 +215,181 @@
     </div>
 
   <script>
-
-// 🔥 PLATFORM ENGINE (SMART SYSTEM)
-const PlatformEngine = (() => {
-    const ANIME_REGISTRY = {
-        "naruto": ["Crunchyroll", "Netflix"],
-        "one piece": ["Crunchyroll", "Netflix"],
-        "demon slayer": ["Netflix", "Crunchyroll"],
-        "jujutsu kaisen": ["Crunchyroll", "Netflix"],
-        "attack on titan": ["Crunchyroll", "Hulu"],
-        "death note": ["Netflix", "YouTube"]
-    };
-
-    const PLATFORM_META = {
-        "Netflix": { type: "premium", color: "#E50914" },
-        "Crunchyroll": { type: "premium", color: "#F47521" },
-        "Hulu": { type: "premium", color: "#3DBB3D" },
-        "YouTube": { type: "free", color: "#FF0000" }
-    };
-
-    const normalize = (t) => t.toLowerCase().replace(/\(.*?\)|dub|hindi|season \d+/gi,'').trim();
-
-    const detect = (title) => {
-        const clean = normalize(title);
-
-        for (let key in ANIME_REGISTRY) {
-            if (clean.includes(key)) {
-                return ANIME_REGISTRY[key].map(name => ({
-                    name,
-                    ...PLATFORM_META[name]
-                }));
-            }
-        }
-
-        // fallback
-        return [{ name: "YouTube", type: "free", color: "#FF0000" }];
-    };
-
-    return { detect };
-})();
-
-
-// --- EXISTING CODE ---
 const WORKER_URL = "https://workerjs.yashrajsharma159.workers.dev?q=";
 const JIKAN_TOP = "https://api.jikan.moe/v4/top/anime?limit=15";
 
 let trendingData = [];
 
-// NAV scroll
-window.addEventListener('scroll', () => {
-    const nav = document.getElementById('navbar');
-    if (window.scrollY > 50) nav.classList.add('scrolled');
-    else nav.classList.remove('scrolled');
-});
+/* =========================
+   🔥 HYBRID DATA SERVICE
+========================= */
+const AnimeDataService = (() => {
+    const cache = new Map();
 
-document.addEventListener('DOMContentLoaded', () => {
-    fetchTrending();
-});
+    const normalize = (title) => {
+        return title.toLowerCase()
+            .replace(/\(dub\)|\(sub\)|season \d+|part \d+/gi, '')
+            .replace(/[^a-z0-9 ]/g, '')
+            .trim();
+    };
 
-// SEARCH
+    const isMatch = (a, b) => {
+        const t1 = normalize(a);
+        const t2 = normalize(b);
+        return t1.includes(t2) || t2.includes(t1);
+    };
+
+    const fetchHybridResults = async (query) => {
+        if (cache.has(query)) return cache.get(query);
+
+        try {
+            const [workerRes, jikanRes] = await Promise.all([
+                fetch(WORKER_URL + encodeURIComponent(query)).then(r => r.json()).catch(()=>({results:[]})),
+                fetch(`https://api.jikan.moe/v4/anime?q=${query}&limit=10`).then(r => r.json()).catch(()=>({data:[]}))
+            ]);
+
+            const worker = workerRes.results || [];
+            const jikan = jikanRes.data || [];
+
+            const merged = worker.map(w => {
+                const match = jikan.find(j => 
+                    isMatch(w.title, j.title) ||
+                    isMatch(w.title, j.title_english || "")
+                );
+
+                return {
+                    title: w.title,
+                    link: w.link,
+                    image: match?.images?.jpg?.large_image_url ||
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(w.title)}&background=141414&color=E50914`,
+                    synopsis: match?.synopsis || "No description",
+                    score: match?.score || "N/A",
+                    isDub: w.title.toLowerCase().includes("dub"),
+                    hasLink: !!w.link
+                };
+            });
+
+            cache.set(query, merged);
+            return merged;
+
+        } catch (e) {
+            console.error(e);
+            return [];
+        }
+    };
+
+    return { fetchHybridResults };
+})();
+
+/* =========================
+   🎯 SEARCH SYSTEM
+========================= */
 const searchInput = document.getElementById('searchInput');
-const suggestionBox = document.getElementById('suggestionBox');
 
-searchInput.addEventListener('input', async (e) => {
-    const query = e.target.value.trim();
-    if (query.length < 3) {
-        suggestionBox.style.display = 'none';
+searchInput.addEventListener('input', (e) => {
+    const q = e.target.value.trim();
+    if (q.length < 3) return;
+    handleSearch(q);
+});
+
+async function handleSearch(query) {
+    const row = document.getElementById('searchRow');
+
+    row.innerHTML = Array(6).fill('<div class="card skeleton"></div>').join('');
+
+    const data = await AnimeDataService.fetchHybridResults(query);
+
+    row.innerHTML = '';
+
+    if (!data.length) {
+        row.innerHTML = "No results";
         return;
     }
 
-    suggestionBox.style.display = 'block';
-    suggestionBox.innerHTML = 'Searching...';
-    
-    const res = await fetch(WORKER_URL + encodeURIComponent(query));
-    const data = await res.json();
-
-    renderSuggestions(data.results);
-    renderRow(data.results, 'searchRow');
-});
-
-function renderSuggestions(list) {
-    suggestionBox.innerHTML = list.slice(0,5).map(item => `
-        <div class="suggestion-item">${item.title}</div>
-    `).join('');
+    data.forEach(anime => {
+        row.innerHTML += `
+        <div class="card" onclick="showAnimeDetails('${btoa(JSON.stringify(anime))}')">
+            <img src="${anime.image}">
+            <div class="card-info">
+                <div>
+                    ${anime.isDub ? '<span class="badge">DUB</span>' : ''}
+                    <span class="badge">⭐ ${anime.score}</span>
+                </div>
+                <div style="font-size:0.8rem;font-weight:700;">
+                    ${anime.title}
+                </div>
+            </div>
+        </div>`;
+    });
 }
 
-// TRENDING
+/* =========================
+   🔥 TRENDING FIX
+========================= */
 async function fetchTrending() {
     const row = document.getElementById('trendingRow');
-    row.innerHTML = 'Loading...';
+    row.innerHTML = "Loading...";
 
-    const res = await fetch(JIKAN_TOP);
-    const data = await res.json();
-    trendingData = data.data;
+    try {
+        const res = await fetch(JIKAN_TOP);
+        const data = await res.json();
 
-    renderRow(trendingData, 'trendingRow', true);
-    setHero(trendingData[0]);
+        trendingData = data.data;
+
+        renderTrending(trendingData);
+        setHero(trendingData[0]);
+
+    } catch {
+        row.innerHTML = "Failed to load";
+    }
+}
+
+function renderTrending(data) {
+    const row = document.getElementById('trendingRow');
+
+    row.innerHTML = data.map(a => `
+        <div class="card" onclick="showAnimeDetails('${btoa(JSON.stringify(a))}')">
+            <img src="${a.images.jpg.large_image_url}">
+        </div>
+    `).join('');
 }
 
 function setHero(anime) {
     const hero = document.getElementById('hero');
     hero.style.backgroundImage = `url(${anime.images.jpg.large_image_url})`;
     document.getElementById('heroTitle').innerText = anime.title;
+    document.getElementById('heroDesc').innerText =
+        anime.synopsis?.slice(0,150) + "...";
 }
 
-// 🎯 UPDATED CARD RENDER
-function renderRow(data, rowId, isJikan = false) {
-    const row = document.getElementById(rowId);
-
-    row.innerHTML = data.map(anime => {
-        const title = anime.title;
-        const img = isJikan 
-            ? anime.images.jpg.large_image_url 
-            : `https://ui-avatars.com/api/?name=${encodeURIComponent(title)}&background=141414&color=E50914`;
-
-        // 🔥 NEW PLATFORM ENGINE
-        const platforms = PlatformEngine.detect(title);
-
-        const badges = platforms.map(p => `
-            <span class="badge" style="background:${p.type==='premium'?p.color:'#46d369'}">
-                ${p.type==='premium' ? '⭐' : '🔓'} ${p.name}
-            </span>
-        `).join('');
-
-        return `
-            <div class="card" onclick="showAnimeDetails('${btoa(JSON.stringify(anime))}', ${isJikan})">
-                <img src="${img}">
-                <div class="card-info">
-                    <div>${badges}</div>
-                    <div style="font-size:0.8rem;font-weight:700;">${title}</div>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-
-// 🎯 UPDATED MODAL
-function showAnimeDetails(encodedData, isJikan) {
-    const anime = JSON.parse(atob(encodedData));
+/* =========================
+   🎬 MODAL FIX
+========================= */
+function showAnimeDetails(encoded) {
+    const anime = JSON.parse(atob(encoded));
     const modal = document.getElementById('modal');
 
-    const platforms = PlatformEngine.detect(anime.title);
-
     document.getElementById('modalBanner').style.backgroundImage =
-        `url(${isJikan ? anime.images.jpg.large_image_url : ''})`;
+        `url(${anime.image || anime.images?.jpg?.large_image_url})`;
 
     document.getElementById('modalTitle').innerText = anime.title;
+    document.getElementById('modalDesc').innerText =
+        anime.synopsis || "No description";
 
-    // 🔥 MULTIPLE PLATFORM BADGES
-    document.getElementById('modalPlatform').innerHTML =
-        platforms.map(p => `
-            <span class="platform-tag ${p.type}">
-                ${p.type==='premium'?'⭐':'🔓'} ${p.name}
-            </span>
-        `).join('');
-
-    document.getElementById('modalWatchBtn').href =
-        isJikan ? anime.url : anime.link;
+    document.getElementById('modalWatchBtn').href = anime.link || "#";
 
     modal.classList.add('active');
 }
 
 function closeModal(e) {
-    if (e.target.id === 'modal') {
+    if (e.target.id === 'modal')
         document.getElementById('modal').classList.remove('active');
-    }
 }
+
+/* =========================
+   INIT
+========================= */
+document.addEventListener('DOMContentLoaded', fetchTrending);
 
 </script>
 </body>
