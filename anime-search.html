@@ -83,7 +83,7 @@ input.addEventListener("keypress", async (e) => {
 
         addLine("> Searching: " + query);
 
-        const res = await fetch(`https://your-worker-url?q=${query}`);
+        const res = await fetch(`https://workerjs.yashrajsharma159.workers.dev?q=${query}`);
         const data = await res.json();
 
         showResults(data.results);
