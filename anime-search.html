@@ -3,461 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DubsWatcher | Premium Anime</title>
+    <title>DubsWatcher | Premium OTT Experience</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* --- DESIGN SYSTEM --- */
         :root {
             --nf-red: #E50914;
-            --nf-red-glow: rgba(229, 9, 20, 0.7);
-            --bg-dark: #080808;
-            --bg-light: #141414;
-            --text-main: #ffffff;
-            --text-muted: #8c8c8c;
-            --glass: rgba(20, 20, 20, 0.7);
-            --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --nf-black: #080808;
+            --nf-dark: #141414;
+            --glass: rgba(0, 0, 0, 0.7);
+            --transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+            --neon-glow: 0 0 15px rgba(229, 9, 20, 0.5);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--nf-black); color: white; overflow-x: hidden; }
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            overflow-x: hidden;
-            padding-bottom: 50px;
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            padding: 20px 5%; display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
+            transition: 0.3s;
         }
+        nav.scrolled { background: var(--nf-black); }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--nf-red); }
+        .logo { font-size: 2rem; font-weight: 800; color: var(--nf-red); text-decoration: none; }
 
-        /* --- HEADER --- */
-        header {
-            position: sticky; top: 0; z-index: 100;
-            padding: 20px 5%;
-            background: linear-gradient(to bottom, rgba(8,8,8,0.95) 0%, rgba(8,8,8,0.6) 100%);
-            backdrop-filter: blur(10px);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
-        .logo { font-size: 2rem; font-weight: 800; color: var(--nf-red); letter-spacing: -1px; text-transform: uppercase; cursor: pointer; }
-
-        .search-container { position: relative; width: 100%; max-width: 400px; }
-        
+        .search-box { position: relative; width: 300px; }
         .search-input {
-            width: 100%; padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 30px; color: white; font-size: 1rem; outline: none;
-            transition: var(--transition);
+            width: 100%; padding: 10px 20px; border-radius: 4px;
+            background: rgba(0,0,0,0.75); border: 1px solid #333;
+            color: white; outline: none;
         }
-
-        .search-input:focus { background: rgba(0,0,0,0.8); border-color: var(--nf-red); box-shadow: 0 0 15px var(--nf-red-glow); }
-
-        /* --- ROW SYSTEM (Netflix Style) --- */
-        .row-container { padding: 0 5%; margin-top: 40px; }
-        .row-title { font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
         
-        .row {
-            display: flex; gap: 15px; overflow-x: auto;
-            padding: 10px 0 30px 0; scroll-behavior: smooth;
+        /* Search Suggestions */
+        .suggestions {
+            position: absolute; top: 110%; width: 100%;
+            background: var(--nf-dark); border-radius: 4px;
+            display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
+        .suggestion-item {
+            padding: 10px; border-bottom: 1px solid #222; cursor: pointer;
+            display: flex; align-items: center; gap: 10px; font-size: 0.8rem;
+        }
+        .suggestion-item:hover { background: #222; }
 
-        .row::-webkit-scrollbar { display: none; } /* Hide scrollbar for rows */
+        /* --- HERO BANNER --- */
+        .hero {
+            height: 85vh; width: 100%; position: relative;
+            background-size: cover; background-position: center;
+            display: flex; align-items: center; padding: 0 5%;
+            animation: fadeIn 1s ease;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to right, rgba(0,0,0,0.9) 20%, transparent 60%),
+                        linear-gradient(to top, var(--nf-black) 0%, transparent 30%);
+        }
+        .hero-content { position: relative; max-width: 600px; z-index: 10; }
+        .hero-title { font-size: 4rem; font-weight: 800; margin-bottom: 10px; line-height: 1.1; }
+        .hero-meta { color: #46d369; font-weight: 600; margin-bottom: 20px; display: flex; gap: 15px; }
+        .hero-desc { font-size: 1.1rem; line-height: 1.5; color: #ccc; margin-bottom: 30px; }
+        .btn-group { display: flex; gap: 15px; }
+        .btn {
+            padding: 12px 30px; border-radius: 4px; font-weight: 800;
+            text-decoration: none; display: flex; align-items: center; gap: 10px;
+            cursor: pointer; border: none; transition: 0.2s;
+        }
+        .btn-white { background: white; color: black; }
+        .btn-grey { background: rgba(109, 109, 110, 0.7); color: white; }
+        .btn:hover { opacity: 0.8; }
 
-        /* --- ANIME CARD --- */
+        /* --- CONTENT ROWS --- */
+        .main-content { margin-top: -100px; position: relative; z-index: 20; padding-bottom: 50px; }
+        .row-container { padding: 20px 0 20px 5%; overflow: hidden; }
+        .row-title { font-size: 1.5vw; color: #e5e5e5; margin-bottom: 15px; }
+        .row-inner {
+            display: flex; gap: 10px; overflow-x: scroll; padding: 20px 0;
+            scrollbar-width: none; scroll-behavior: smooth;
+        }
+        .row-inner::-webkit-scrollbar { display: none; }
+
+        /* --- CARD HOVER EXPANSION --- */
         .card {
-            flex: 0 0 200px; /* Fixed width for horizontal scroll */
-            aspect-ratio: 2/3;
-            border-radius: 8px; overflow: hidden; cursor: pointer;
-            position: relative; background: var(--bg-light);
-            transition: var(--transition);
-            animation: fadeIn 0.5s ease forwards;
+            flex: 0 0 240px; aspect-ratio: 16/9; position: relative;
+            border-radius: 4px; cursor: pointer; transition: var(--transition);
         }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
+        .card img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+        
         .card:hover {
-            transform: scale(1.08); z-index: 10;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.8), 0 0 15px var(--nf-red-glow);
-            border: 1px solid var(--nf-red);
+            transform: scale(1.4); z-index: 100;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
-
-        .card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
-        .card:hover .card-img { transform: scale(1.1); filter: brightness(0.7); }
-
-        /* Hover Overlay */
+        
         .card-info {
-            position: absolute; bottom: -50px; left: 0; width: 100%;
-            padding: 15px; background: linear-gradient(to top, #000 0%, transparent 100%);
-            display: flex; flex-direction: column; gap: 8px;
-            transition: var(--transition); opacity: 0;
+            position: absolute; top: 100%; left: 0; width: 100%;
+            background: var(--nf-dark); padding: 15px; border-radius: 0 0 4px 4px;
+            display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
-
-        .card:hover .card-info { bottom: 0; opacity: 1; }
-
-        .card-title { font-size: 0.95rem; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .badges { display: flex; gap: 5px; flex-wrap: wrap; }
-        .badge { padding: 3px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; background: rgba(255,255,255,0.2); }
-        .badge.red { background: var(--nf-red); }
-        .badge.blue { background: #00f2ff; color: #000; }
-
-        .play-icon {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
-            background: var(--nf-red); width: 50px; height: 50px; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; transition: var(--transition);
+        .card:hover .card-info { display: block; }
+        
+        .badge {
+            font-size: 0.6rem; padding: 2px 5px; border: 1px solid #666;
+            margin-right: 5px; border-radius: 2px;
         }
-        .play-icon::after { content: '▶'; color: white; font-size: 1.2rem; margin-left: 4px; }
-        .card:hover .play-icon { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .badge-hd { color: white; border-color: white; }
+        .badge-platform { background: var(--nf-red); border: none; }
 
-        /* --- SKELETON LOADER --- */
-        .skeleton { background: linear-gradient(90deg, #141414 25%, #2a2a2a 50%, #141414 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-
-        /* --- MODAL --- */
-        .modal-overlay {
+        /* --- ADVANCED MODAL --- */
+        .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 1000; opacity: 0; pointer-events: none; transition: var(--transition);
+            background: rgba(0,0,0,0.85); z-index: 2000;
+            display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: 0.4s; padding: 20px;
         }
-        .modal-overlay.active { opacity: 1; pointer-events: auto; }
-
+        .modal.active { display: flex; opacity: 1; }
         .modal-content {
-            background: var(--bg-light); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px; width: 90%; max-width: 450px; padding: 30px;
-            transform: translateY(20px); transition: var(--transition); position: relative;
+            background: var(--nf-dark); width: 100%; max-width: 800px;
+            border-radius: 10px; overflow: hidden; position: relative;
+            transform: translateY(50px); transition: 0.4s;
         }
-        .modal-overlay.active .modal-content { transform: translateY(0); }
-
-        .close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+        .modal.active .modal-content { transform: translateY(0); }
+        .modal-banner { height: 400px; background-size: cover; position: relative; }
+        .modal-banner::after {
+            content: ''; position: absolute; bottom: 0; width: 100%; height: 100px;
+            background: linear-gradient(to top, var(--nf-dark), transparent);
+        }
+        .modal-details { padding: 40px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
         
-        .modal-img { width: 100px; height: 150px; border-radius: 8px; object-fit: cover; float: left; margin: 0 15px 15px 0; }
-        .modal-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; }
-        
-        .btn-group { display: flex; gap: 10px; clear: both; margin-top: 20px; }
-        .btn { flex: 1; padding: 12px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none; position: relative; overflow: hidden; }
-        .btn-play { background: var(--nf-red); color: white; }
-        .btn-add { background: rgba(255,255,255,0.1); color: white; }
-        .btn-add.active { background: #4caf50; }
+        .platform-tag {
+            display: inline-block; padding: 5px 12px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 700; margin-bottom: 10px;
+        }
+        .premium { background: #ffd700; color: black; }
+        .free { background: #46d369; color: white; }
 
-        /* Ripple Effect */
-        .ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.4); transform: scale(0); animation: ripple 0.6s linear; pointer-events: none; }
-        @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+        /* --- SKELETON --- */
+        .skeleton { background: #222; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* Empty State */
-        .empty-state { width: 100%; text-align: center; padding: 40px; color: var(--text-muted); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .card { flex: 0 0 160px; }
+            .modal-details { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo" onclick="resetView()">DUBS WATCHER</div>
-        <div class="search-container">
-            <input type="text" id="searchInput" class="search-input" placeholder="Live search anime...">
+    <nav id="navbar">
+        <a href="#" class="logo">DUBS WATCHER</a>
+        <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" placeholder="Titles, characters, genres">
+            <div id="suggestionBox" class="suggestions"></div>
         </div>
-    </header>
+    </nav>
 
-    <!-- Default View -->
-    <div id="defaultView">
-        <div class="row-container" id="watchlistContainer" style="display: none;">
-            <h2 class="row-title">📌 My Watchlist</h2>
-            <div class="row" id="watchlistRow"></div>
-        </div>
-        <div class="row-container">
-            <h2 class="row-title">🔥 Trending Anime</h2>
-            <div class="row" id="trendingRow"></div>
-        </div>
-    </div>
-
-    <!-- Search View -->
-    <div id="searchView" style="display: none;">
-        <div class="row-container">
-            <h2 class="row-title">🎯 Search Results</h2>
-            <div class="row" id="searchRow"></div>
-        </div>
-        <div class="row-container" id="dubbedContainer" style="display: none;">
-            <h2 class="row-title">🎬 Dubbed Only</h2>
-            <div class="row" id="dubbedRow"></div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div id="modal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal()">×</button>
-            <img id="modalImg" src="" class="modal-img">
-            <h2 id="modalTitle" class="modal-title">Title</h2>
-            <div id="modalBadges" class="badges" style="margin-bottom: 15px;"></div>
+    <section id="hero" class="hero">
+        <div class="hero-content">
+            <h1 id="heroTitle" class="hero-title">Loading...</h1>
+            <div class="hero-meta">
+                <span id="heroMatch">98% Match</span>
+                <span id="heroYear">2024</span>
+                <span class="badge">U/A 16+</span>
+            </div>
+            <p id="heroDesc" class="hero-desc">Experience the ultimate anime discovery platform with real-time updates and multi-platform availability.</p>
             <div class="btn-group">
-                <a href="#" id="modalPlay" target="_blank" class="btn btn-play ripple-btn">▶ Play</a>
-                <button id="modalAdd" class="btn btn-add ripple-btn">+ Watchlist</button>
+                <button class="btn btn-white">▶ Play</button>
+                <button class="btn btn-grey" onclick="openRandomModal()">ⓘ More Info</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="main-content">
+        <div class="row-container">
+            <h2 class="row-title">🎯 Your Search Results</h2>
+            <div id="searchRow" class="row-inner">
+                <!-- Cards injected here -->
+            </div>
+        </div>
+
+        <div class="row-container">
+            <h2 class="row-title">🔥 Trending Now</h2>
+            <div id="trendingRow" class="row-inner">
+                <!-- Skeletons -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Netflix Modal -->
+    <div id="modal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content">
+            <div id="modalBanner" class="modal-banner"></div>
+            <div class="modal-details">
+                <div>
+                    <div id="modalPlatform" class="platform-tag"></div>
+                    <h2 id="modalTitle" style="font-size: 2rem; margin-bottom: 15px;"></h2>
+                    <p id="modalDesc" style="color: #bcbcbc; line-height: 1.6;"></p>
+                </div>
+                <div>
+                    <p style="color: #777; margin-bottom: 10px;">Languages:</p>
+                    <div id="modalLangs"></div>
+                    <br>
+                    <a href="#" id="modalWatchBtn" target="_blank" class="btn btn-white" style="justify-content: center;">Watch Now</a>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- CONFIG & STATE ---
         const WORKER_URL = "https://workerjs.yashrajsharma159.workers.dev?q=";
-        const JIKAN_SEARCH_URL = "https://api.jikan.moe/v4/anime?q=";
-        const JIKAN_TOP_URL = "https://api.jikan.moe/v4/top/anime?limit=10";
+        const JIKAN_TOP = "https://api.jikan.moe/v4/top/anime?limit=15";
         
-        const cache = new Map(); // API Caching
-        let watchlist = JSON.parse(localStorage.getItem('dubs_watchlist')) || [];
-        let currentModalAnime = null;
+        // --- DATA STATE ---
+        let trendingData = [];
 
-        // --- DOM ELEMENTS ---
-        const searchInput = document.getElementById('searchInput');
-        const defaultView = document.getElementById('defaultView');
-        const searchView = document.getElementById('searchView');
-        const searchRow = document.getElementById('searchRow');
-        const dubbedRow = document.getElementById('dubbedRow');
-        const dubbedContainer = document.getElementById('dubbedContainer');
-        const trendingRow = document.getElementById('trendingRow');
-        const watchlistRow = document.getElementById('watchlistRow');
-        const watchlistContainer = document.getElementById('watchlistContainer');
+        // --- INIT ---
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
 
-        // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
-            renderWatchlist();
             fetchTrending();
-            setupRippleEffect();
         });
 
-        // --- DEBOUNCE (LIVE SEARCH) ---
-        let debounceTimer;
-        searchInput.addEventListener('input', (e) => {
-            clearTimeout(debounceTimer);
+        // --- SEARCH LOGIC ---
+        const searchInput = document.getElementById('searchInput');
+        const suggestionBox = document.getElementById('suggestionBox');
+
+        searchInput.addEventListener('input', async (e) => {
             const query = e.target.value.trim();
-            
             if (query.length < 3) {
-                if (query.length === 0) resetView();
+                suggestionBox.style.display = 'none';
                 return;
             }
 
-            debounceTimer = setTimeout(() => {
-                executeSearch(query);
-            }, 300); // 300ms wait
+            // Show Suggestions
+            suggestionBox.style.display = 'block';
+            suggestionBox.innerHTML = '<div class="suggestion-item">Searching...</div>';
+            
+            try {
+                const res = await fetch(WORKER_URL + encodeURIComponent(query));
+                const data = await res.json();
+                renderSuggestions(data.results);
+                renderRow(data.results, 'searchRow');
+            } catch (err) { console.error(err); }
         });
 
-        function resetView() {
-            searchInput.value = '';
-            defaultView.style.display = 'block';
-            searchView.style.display = 'none';
-            renderWatchlist();
-        }
-
-        // --- SMART API FETCHING (Worker + Jikan) ---
-        async function executeSearch(query) {
-            defaultView.style.display = 'none';
-            searchView.style.display = 'block';
-            
-            renderSkeletons(searchRow, 6);
-            dubbedContainer.style.display = 'none';
-
-            try {
-                // Check Cache
-                if (cache.has(query)) {
-                    renderSearchResults(cache.get(query));
-                    return;
-                }
-
-                // Parallel Fetch: Custom Worker for Data + Jikan for Images
-                const [workerRes, jikanRes] = await Promise.all([
-                    fetch(`${WORKER_URL}${encodeURIComponent(query)}`).then(res => res.json()).catch(() => ({ results: [] })),
-                    fetch(`${JIKAN_SEARCH_URL}${encodeURIComponent(query)}&limit=10`).then(res => res.json()).catch(() => ({ data: [] }))
-                ]);
-
-                // Create an image map from Jikan results to match against Worker titles
-                const imageMap = {};
-                if (jikanRes.data) {
-                    jikanRes.data.forEach(anime => {
-                        // Store the image using lowercase title as key
-                        imageMap[anime.title.toLowerCase()] = anime.images.jpg.large_image_url;
-                        if(anime.title_english) imageMap[anime.title_english.toLowerCase()] = anime.images.jpg.large_image_url;
-                    });
-                }
-
-                // Enhance worker results with Jikan images
-                const enhancedResults = (workerRes.results || []).map(item => {
-                    // Clean title for matching (remove 'dub', 'hindi', etc.)
-                    let cleanTitle = item.title.toLowerCase().replace(/\(dub\)|\(hindi\)|\(tv\)/gi, '').trim();
-                    
-                    // Fuzzy match: Find first Jikan title that includes our clean title (or vice versa)
-                    let foundImage = null;
-                    for (let key in imageMap) {
-                        if (key.includes(cleanTitle) || cleanTitle.includes(key)) {
-                            foundImage = imageMap[key];
-                            break;
-                        }
-                    }
-
-                    return {
-                        ...item,
-                        id: btoa(item.link), // generate simple unique ID
-                        image: foundImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(item.title)}&background=141414&color=E50914&size=300`
-                    };
-                });
-
-                cache.set(query, enhancedResults); // Save to cache
-                renderSearchResults(enhancedResults);
-
-            } catch (error) {
-                searchRow.innerHTML = `<div class="empty-state">Network Error. Please try again.</div>`;
-            }
-        }
-
-        async function fetchTrending() {
-            try {
-                const res = await fetch(JIKAN_TOP_URL);
-                const data = await res.json();
-                trendingRow.innerHTML = '';
-                data.data.forEach(anime => {
-                    const card = createCardElement({
-                        id: anime.mal_id,
-                        title: anime.title,
-                        image: anime.images.jpg.large_image_url,
-                        isTrending: true,
-                        link: anime.url
-                    });
-                    trendingRow.appendChild(card);
-                });
-            } catch (e) {
-                trendingRow.innerHTML = '<div class="empty-state">Failed to load trending</div>';
-            }
-        }
-
-        // --- RENDERING ---
-        function renderSearchResults(results) {
-            searchRow.innerHTML = '';
-            dubbedRow.innerHTML = '';
-            
-            if (results.length === 0) {
-                searchRow.innerHTML = `<div class="empty-state">No results found. Try another name.</div>`;
-                return;
-            }
-
-            const dubbedResults = [];
-
-            results.forEach(anime => {
-                searchRow.appendChild(createCardElement(anime));
-                if (anime.isDub) dubbedResults.push(anime);
-            });
-
-            if (dubbedResults.length > 0) {
-                dubbedContainer.style.display = 'block';
-                dubbedResults.forEach(anime => dubbedRow.appendChild(createCardElement(anime)));
-            }
-        }
-
-        function renderWatchlist() {
-            watchlistRow.innerHTML = '';
-            if (watchlist.length > 0) {
-                watchlistContainer.style.display = 'block';
-                watchlist.forEach(anime => watchlistRow.appendChild(createCardElement(anime)));
-            } else {
-                watchlistContainer.style.display = 'none';
-            }
-        }
-
-        function createCardElement(anime) {
-            const div = document.createElement('div');
-            div.className = 'card';
-            
-            let badges = '';
-            if (anime.isDub) badges += `<span class="badge red">DUB</span>`;
-            if (anime.languages?.hindi) badges += `<span class="badge blue">HI</span>`;
-            if (anime.isTrending) badges += `<span class="badge red">TOP</span>`;
-
-            div.innerHTML = `
-                <img src="${anime.image}" class="card-img" loading="lazy">
-                <div class="play-icon"></div>
-                <div class="card-info">
-                    <div class="badges">${badges}</div>
-                    <div class="card-title">${anime.title}</div>
+        function renderSuggestions(list) {
+            suggestionBox.innerHTML = list.slice(0, 5).map(item => `
+                <div class="suggestion-item" onclick="openModalById('${btoa(item.link)}')">
+                    <span>🎬</span> ${item.title}
                 </div>
-            `;
-            div.onclick = () => openModal(anime);
-            return div;
+            `).join('');
         }
 
-        function renderSkeletons(container, count) {
-            container.innerHTML = '';
-            for (let i = 0; i < count; i++) {
-                container.innerHTML += `<div class="card skeleton"></div>`;
-            }
+        // --- FETCHING TRENDING ---
+        async function fetchTrending() {
+            const row = document.getElementById('trendingRow');
+            row.innerHTML = Array(6).fill('<div class="card skeleton"></div>').join('');
+
+            try {
+                const res = await fetch(JIKAN_TOP);
+                const data = await res.json();
+                trendingData = data.data;
+                renderRow(trendingData, 'trendingRow', true);
+                setHero(trendingData[0]);
+            } catch (err) { console.error(err); }
         }
 
-        // --- MODAL & WATCHLIST LOGIC ---
-        const modal = document.getElementById('modal');
-        const modalAddBtn = document.getElementById('modalAdd');
+        function setHero(anime) {
+            const hero = document.getElementById('hero');
+            hero.style.backgroundImage = `url(${anime.images.jpg.large_image_url})`;
+            document.getElementById('heroTitle').innerText = anime.title;
+            document.getElementById('heroDesc').innerText = anime.synopsis ? anime.synopsis.slice(0, 150) + '...' : 'Dive into this amazing journey.';
+        }
 
-        function openModal(anime) {
-            currentModalAnime = anime;
+        // --- RENDER ROWS ---
+        function renderRow(data, rowId, isJikan = false) {
+            const row = document.getElementById(rowId);
+            row.innerHTML = data.map(anime => {
+                const title = isJikan ? anime.title : anime.title;
+                const img = isJikan ? anime.images.jpg.large_image_url : `https://ui-avatars.com/api/?name=${encodeURIComponent(title)}&background=141414&color=E50914&size=400`;
+                const platform = detectPlatform(title);
+                
+                return `
+                    <div class="card" onclick="showAnimeDetails('${btoa(JSON.stringify(anime))}', ${isJikan})">
+                        <img src="${img}" alt="${title}">
+                        <div class="card-info">
+                            <div style="margin-bottom: 8px;">
+                                <span class="badge badge-platform">${platform.name}</span>
+                                <span class="badge">98% Match</span>
+                            </div>
+                            <div style="font-size: 0.8rem; font-weight: 700;">${title}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- PLATFORM DETECTION ---
+        function detectPlatform(title) {
+            const t = title.toLowerCase();
+            if (t.includes('naruto') || t.includes('one piece')) return { name: 'Crunchyroll', type: 'premium' };
+            if (t.includes('demon slayer') || t.includes('jujutsu')) return { name: 'Netflix', type: 'premium' };
+            return { name: 'YouTube', type: 'free' };
+        }
+
+        // --- MODAL SYSTEM ---
+        function showAnimeDetails(encodedData, isJikan) {
+            const anime = JSON.parse(atob(encodedData));
+            const modal = document.getElementById('modal');
+            const platform = detectPlatform(anime.title);
+
+            document.getElementById('modalBanner').style.backgroundImage = `url(${isJikan ? anime.images.jpg.large_image_url : ''})`;
             document.getElementById('modalTitle').innerText = anime.title;
-            document.getElementById('modalImg').src = anime.image;
-            document.getElementById('modalPlay').href = anime.link || '#';
+            document.getElementById('modalDesc').innerText = isJikan ? anime.synopsis : "No description available for this source.";
             
-            let badges = '';
-            if (anime.isDub) badges += `<span class="badge red">DUBBED</span>`;
-            if (anime.languages?.hindi) badges += `<span class="badge blue">HINDI</span>`;
-            document.getElementById('modalBadges').innerHTML = badges;
+            const pTag = document.getElementById('modalPlatform');
+            pTag.innerText = platform.type === 'premium' ? `⭐ ${platform.name} Premium` : `✅ Free on ${platform.name}`;
+            pTag.className = `platform-tag ${platform.type}`;
 
-            checkWatchlistState();
+            document.getElementById('modalWatchBtn').href = isJikan ? anime.url : anime.link;
+            
             modal.classList.add('active');
         }
 
-        function closeModal() { modal.classList.remove('active'); }
-
-        modalAddBtn.addEventListener('click', () => {
-            if (!currentModalAnime) return;
-            const existsIndex = watchlist.findIndex(item => item.id === currentModalAnime.id);
-            
-            if (existsIndex > -1) {
-                watchlist.splice(existsIndex, 1); // Remove
-            } else {
-                watchlist.push(currentModalAnime); // Add
-            }
-            
-            localStorage.setItem('dubs_watchlist', JSON.stringify(watchlist));
-            checkWatchlistState();
-            if(defaultView.style.display === 'block') renderWatchlist();
-        });
-
-        function checkWatchlistState() {
-            const exists = watchlist.some(item => item.id === currentModalAnime.id);
-            if (exists) {
-                modalAddBtn.innerText = '✓ In Watchlist';
-                modalAddBtn.classList.add('active');
-            } else {
-                modalAddBtn.innerText = '+ Watchlist';
-                modalAddBtn.classList.remove('active');
-            }
-        }
-
-        // --- UI MICRO-INTERACTIONS (Ripple) ---
-        function setupRippleEffect() {
-            document.addEventListener('click', function(e) {
-                const target = e.target.closest('.ripple-btn');
-                if (!target) return;
-
-                const circle = document.createElement('span');
-                const diameter = Math.max(target.clientWidth, target.clientHeight);
-                const radius = diameter / 2;
-
-                circle.style.width = circle.style.height = `${diameter}px`;
-                circle.style.left = `${e.clientX - target.getBoundingClientRect().left - radius}px`;
-                circle.style.top = `${e.clientY - target.getBoundingClientRect().top - radius}px`;
-                circle.classList.add('ripple');
-
-                const ripple = target.querySelector('.ripple');
-                if (ripple) ripple.remove();
-
-                target.appendChild(circle);
-            });
+        function closeModal(e) {
+            if (e.target.id === 'modal') document.getElementById('modal').classList.remove('active');
         }
     </script>
 </body>
