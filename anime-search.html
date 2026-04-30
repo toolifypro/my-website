@@ -3,216 +3,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToolifyPro | Ultimate Nexus</title>
-    <link rel="icon" type="image/png" href="https://i.ibb.co/3s3XmXh/Toolify-Pro-Iconic-T.png">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>ToolifyPro | Nexus OTT</title>
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-87V4WX8GHQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-87V4WX8GHQ');
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary: #6366f1; --secondary: #a855f7; --accent: #00f2ff;
-            --bg: #030712; --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --text-main: #f8fafc; --text-dim: #94a3b8;
+            --netflix-red: #E50914;
+            --bg-dark: #080808;
+            --bg-card: #141414;
+            --text-main: #ffffff;
+            --text-dim: #b3b3b3;
+            --transition: 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
 
-        /* --- News Ticker --- */
-        .news-ticker {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white; padding: 8px 0; font-size: 0.75rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 1px; overflow: hidden;
-            position: sticky; top: 0; z-index: 1001;
-        }
-        .ticker-content { display: inline-block; white-space: nowrap; animation: ticker 30s linear infinite; }
-        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; height: 4px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--netflix-red); }
 
-        header {
-            padding: 1rem 8%; display: flex; justify-content: space-between; align-items: center;
-            backdrop-filter: blur(20px); position: sticky; top: 31px; z-index: 1000; border-bottom: 1px solid var(--glass-border);
+        /* --- Navbar --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 20px 4%;
+            display: flex; align-items: center; justify-content: space-between;
+            z-index: 2000; transition: background 0.5s;
         }
-        .logo-text { font-size: 1.4rem; font-weight: 800; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        nav.scrolled { background: var(--bg-dark); border-bottom: 1px solid #222; }
+        .nav-left { display: flex; align-items: center; gap: 25px; }
+        .brand { font-size: 1.8rem; font-weight: 800; color: var(--netflix-red); text-decoration: none; letter-spacing: -1px; }
+        .menu-icon { font-size: 1.5rem; cursor: pointer; color: white; border: none; background: none; }
 
-        .search-container { max-width: 700px; margin: 40px auto; padding: 0 20px; position: relative; }
-        .search-wrapper { position: relative; display: flex; align-items: center; }
-        .search-box {
-            width: 100%; padding: 18px 60px; border-radius: 50px; border: 1px solid var(--glass-border);
-            background: var(--glass); color: white; font-size: 1.1rem; outline: none; transition: 0.3s;
+        /* --- Sidebar --- */
+        #sidebar {
+            position: fixed; left: -300px; top: 0; width: 300px; height: 100%;
+            background: #111; z-index: 3000; transition: var(--transition);
+            padding: 80px 30px; box-shadow: 20px 0 50px rgba(0,0,0,0.5);
         }
-        .search-box:focus { border-color: var(--accent); box-shadow: 0 0 30px rgba(0, 242, 255, 0.2); }
+        #sidebar.active { left: 0; }
+        .sidebar-item { list-style: none; margin: 20px 0; font-size: 1.2rem; font-weight: 600; cursor: pointer; color: var(--text-dim); transition: 0.3s; }
+        .sidebar-item:hover { color: white; transform: translateX(10px); }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2500; display: none; }
+
+        /* --- Hero Slider --- */
+        #hero { position: relative; height: 90vh; width: 100%; overflow: hidden; margin-bottom: 20px; }
+        .slide { 
+            position: absolute; inset: 0; opacity: 0; transition: opacity 1s ease; 
+            display: flex; align-items: center; padding: 0 4%;
+        }
+        .slide.active { opacity: 1; }
+        .slide-bg { position: absolute; inset: 0; z-index: -1; }
+        .slide-bg img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.5); }
+        .slide-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, var(--bg-dark) 5%, transparent 50%, rgba(0,0,0,0.6) 100%); }
         
-        .mic-btn {
-            position: absolute; right: 20px; background: none; border: none; 
-            color: var(--text-dim); cursor: pointer; font-size: 1.2rem; transition: 0.3s;
-        }
-        .mic-btn.active { color: #ff4444; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        .hero-content { max-width: 650px; transform: translateY(30px); transition: 0.8s ease; opacity: 0; }
+        .slide.active .hero-content { transform: translateY(0); opacity: 1; }
+        .hero-content h1 { font-size: 4rem; font-weight: 800; margin-bottom: 15px; line-height: 1.1; }
+        .hero-meta { color: #46d369; font-weight: 700; margin-bottom: 20px; display: flex; gap: 15px; align-items: center; }
+        .rating-badge { background: #333; padding: 2px 8px; border-radius: 4px; color: white; font-size: 0.8rem; }
+        .hero-desc { color: var(--text-dim); line-height: 1.4; font-size: 1.1rem; margin-bottom: 30px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        .hero-btns { display: flex; gap: 15px; }
+        .btn { padding: 12px 28px; border-radius: 4px; font-weight: 700; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 10px; transition: 0.2s; font-size: 1.1rem; }
+        .btn-play { background: white; color: black; }
+        .btn-play:hover { background: rgba(255,255,255,0.8); }
+        .btn-info { background: rgba(109, 109, 110, 0.7); color: white; }
+        .btn-info:hover { background: rgba(109, 109, 110, 0.4); }
 
-        /* --- Sections --- */
-        .section-title { padding: 20px 10% 0; font-size: 0.9rem; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px 10% 40px; }
+        /* --- Content Rows --- */
+        .row { padding: 20px 0 20px 4%; }
+        .row-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 15px; color: #e5e5e5; }
+        .row-container { display: flex; overflow-x: auto; overflow-y: hidden; gap: 10px; padding: 20px 0; scrollbar-width: none; scroll-behavior: smooth; }
+        .row-container::-webkit-scrollbar { display: none; }
 
+        /* --- Anime Card --- */
         .card {
-            background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px;
-            padding: 20px; transition: 0.3s; position: relative; overflow: hidden;
+            flex: 0 0 auto; width: 220px; height: 320px; border-radius: 6px; overflow: hidden;
+            background: var(--bg-card); position: relative; cursor: pointer;
+            transition: var(--transition);
         }
-        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .card h3 { font-size: 1rem; margin-bottom: 10px; height: 40px; overflow: hidden; }
+        .card:hover { transform: scale(1.15); z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .card img { width: 100%; height: 100%; object-fit: cover; }
         
-        .fav-btn {
-            position: absolute; top: 15px; right: 15px; background: none; border: none;
-            color: var(--text-dim); cursor: pointer; font-size: 1.2rem;
+        .card-info {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 15px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            opacity: 0; transition: 0.3s;
         }
-        .fav-btn.active { color: #ff4444; }
+        .card:hover .card-info { opacity: 1; }
+        .card-info h4 { font-size: 0.9rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-info .meta { font-size: 0.75rem; color: #46d369; display: flex; justify-content: space-between; }
 
-        .watch-btn {
-            display: block; text-align: center; background: var(--primary); color: white;
-            padding: 10px; border-radius: 12px; text-decoration: none; font-weight: 700;
-            font-size: 0.8rem; margin-top: 15px; transition: 0.3s;
+        /* --- Skeletons --- */
+        .skeleton { background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
+        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 2.5rem; }
+            .card { width: 160px; height: 240px; }
         }
-        .watch-btn:hover { background: var(--secondary); box-shadow: 0 5px 15px rgba(168, 85, 247, 0.4); }
-
-        footer { text-align: center; padding: 40px; border-top: 1px solid var(--glass-border); color: var(--text-dim); font-size: 0.7rem; }
     </style>
 </head>
 <body>
 
-    <div class="news-ticker">
-        <div class="ticker-content">
-            ⚡ Trending: Re:Zero Season 3 Hindi Dub Released! • Mushoku Tensei New Trailer Out • Lord of the Mysteries Anime Premiere Soon • Fate Series Watch Order Updated ⚡
+    <div class="overlay" id="overlay"></div>
+
+    <nav id="navbar">
+        <div class="nav-left">
+            <button class="menu-icon" id="openMenu">☰</button>
+            <a href="#" class="brand">NEXUS</a>
         </div>
-    </div>
+    </nav>
 
-    <header>
-        <div class="logo-text">Nexus OS v3.0</div>
-        <div id="status" style="font-size: 0.7rem; color: var(--text-dim);">SYSTEM ONLINE</div>
-    </header>
+    <aside id="sidebar">
+        <ul id="categoryList">
+            <li class="sidebar-item" data-genre="1">Shonen</li>
+            <li class="sidebar-item" data-genre="10">Fantasy</li>
+            <li class="sidebar-item" data-genre="4">Comedy</li>
+            <li class="sidebar-item" data-genre="22">Romance</li>
+            <li class="sidebar-item" data-genre="14">Horror</li>
+            <li class="sidebar-item" data-genre="37">Supernatural</li>
+        </ul>
+    </aside>
 
-    <div class="search-container">
-        <div class="search-wrapper">
-            <input type="text" id="searchInput" class="search-box" placeholder="Speak or type anime name...">
-            <button class="mic-btn" id="micBtn">🎤</button>
+    <section id="hero"></section>
+
+    <main id="content">
+        <div class="row" id="trending-row">
+            <h2 class="row-title">Trending Now 🔥</h2>
+            <div class="row-container" id="trending-container"></div>
         </div>
-    </div>
-
-    <!-- Recently Watched -->
-    <div id="historySection" style="display:none;">
-        <h2 class="section-title">Recently Watched 🕒</h2>
-        <div class="grid" id="historyGrid"></div>
-    </div>
-
-    <!-- Favorites -->
-    <div id="favSection" style="display:none;">
-        <h2 class="section-title">My Watchlist ❤️</h2>
-        <div class="grid" id="favGrid"></div>
-    </div>
-
-    <!-- Search Results -->
-    <h2 class="section-title">Database Search 🛰️</h2>
-    <div class="grid" id="animeGrid">
-        <p style="grid-column: 1/-1; text-align: center; color: var(--text-dim);">Enter keywords to scan the Nexus...</p>
-    </div>
-
-    <footer>TOOLIFYPRO NEXUS • POWERED BY CLOUDFLARE & GENIUS DESIGN</footer>
+        <div class="row" id="popular-row">
+            <h2 class="row-title">All-Time Popular 🌟</h2>
+            <div class="row-container" id="popular-container"></div>
+        </div>
+        <div class="row" id="action-row">
+            <h2 class="row-title">Adrenaline Rush ⚔️</h2>
+            <div class="row-container" id="action-container"></div>
+        </div>
+    </main>
 
     <script>
-        const searchInput = document.getElementById('searchInput');
-        const animeGrid = document.getElementById('animeGrid');
-        const historyGrid = document.getElementById('historyGrid');
-        const favGrid = document.getElementById('favGrid');
-        const micBtn = document.getElementById('micBtn');
-        const WORKER_URL = "https://workerjs.yashrajsharma159.workers.dev/?q=";
-
-        // --- Voice Search Logic ---
-        const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (Recognition) {
-            const rec = new Recognition();
-            micBtn.onclick = () => {
-                rec.start();
-                micBtn.classList.add('active');
-            };
-            rec.onresult = (e) => {
-                const transcript = e.results[0][0].transcript;
-                searchInput.value = transcript;
-                fetchAnime(transcript);
-                micBtn.classList.remove('active');
-            };
-            rec.onspeechend = () => micBtn.classList.remove('active');
-        }
-
-        // --- Search Logic ---
-        let timer;
-        searchInput.oninput = (e) => {
-            clearTimeout(timer);
-            timer = setTimeout(() => fetchAnime(e.target.value), 600);
+        const API_BASE = "https://api.jikan.moe/v4";
+        const state = {
+            heroAnimes: [],
+            currentSlide: 0
         };
 
-        async function fetchAnime(query) {
-            if (query.length < 3) return;
-            animeGrid.innerHTML = "Scanning sectors...";
+        // --- Core Functions ---
+
+        async function init() {
+            setupEventListeners();
+            showSkeletons();
+            
+            // Load Hero
+            const top = await fetchData("/top/anime?limit=5");
+            state.heroAnimes = top.data;
+            renderHero();
+            startHeroTimer();
+
+            // Load Rows sequentially (avoiding rate limit)
+            await loadRow("/seasons/now", "trending-container");
+            await loadRow("/top/anime?filter=bypopularity", "popular-container");
+            await loadRow("/anime?genres=1&order_by=score&sort=desc", "action-container");
+        }
+
+        async function fetchData(endpoint) {
             try {
-                const res = await fetch(WORKER_URL + encodeURIComponent(query));
-                const data = await res.json();
-                renderCards(data.results, animeGrid);
-            } catch (err) {
-                animeGrid.innerHTML = "Offline error.";
+                const response = await fetch(`${API_BASE}${endpoint}`);
+                return await response.json();
+            } catch (error) {
+                console.error("API Error:", error);
+                return { data: [] };
             }
         }
 
-        // --- Storage Logic (History & Favorites) ---
-        function getStore(key) { return JSON.parse(localStorage.getItem(key) || '[]'); }
-        function saveStore(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
-
-        function toggleFav(anime) {
-            let favs = getStore('nexus_favs');
-            const exists = favs.find(f => f.link === anime.link);
-            if (exists) favs = favs.filter(f => f.link !== anime.link);
-            else favs.unshift(anime);
-            saveStore('nexus_favs', favs);
-            updatePersonalSections();
-        }
-
-        function addToHistory(anime) {
-            let history = getStore('nexus_history');
-            history = history.filter(h => h.link !== anime.link);
-            history.unshift(anime);
-            saveStore('nexus_history', history.slice(0, 4)); // Keep last 4
-            updatePersonalSections();
-        }
-
-        function updatePersonalSections() {
-            const history = getStore('nexus_history');
-            const favs = getStore('nexus_favs');
-
-            if (history.length) {
-                document.getElementById('historySection').style.display = 'block';
-                renderCards(history, historyGrid, true);
-            }
-            if (favs.length) {
-                document.getElementById('favSection').style.display = 'block';
-                renderCards(favs, favGrid, true);
-            } else {
-                document.getElementById('favSection').style.display = 'none';
-            }
-        }
-
-        function renderCards(list, container, isPersonal = false) {
-            const favs = getStore('nexus_favs');
-            container.innerHTML = list.map(anime => {
-                const isFaved = favs.some(f => f.link === anime.link);
-                return `
-                    <div class="card">
-                        <button class="fav-btn ${isFaved ? 'active' : ''}" onclick='event.preventDefault(); toggleFav(${JSON.stringify(anime).replace(/'/g, "&apos;")})'>❤️</button>
-                        <h3>${anime.title}</h3>
-                        <p style="font-size:0.7rem; color:var(--accent)">${anime.quality || 'HD'}</p>
-                        <a href="${anime.link}" target="_blank" class="watch-btn" onclick='addToHistory(${JSON.stringify(anime).replace(/'/g, "&apos;")})'>ACCESS STREAM</a>
+        function renderHero() {
+            const heroSection = document.getElementById('hero');
+            heroSection.innerHTML = state.heroAnimes.map((anime, index) => `
+                <div class="slide ${index === 0 ? 'active' : ''}">
+                    <div class="slide-bg">
+                        <img src="${anime.images.webp.large_image_url}" alt="">
                     </div>
-                `;
-            }).join('');
+                    <div class="hero-content">
+                        <div class="hero-meta">
+                            <span class="rating-badge">TOP RATED</span>
+                            <span>${anime.year || '2024'}</span>
+                            <span style="color:white">${anime.episodes} Episodes</span>
+                        </div>
+                        <h1>${anime.title_english || anime.title}</h1>
+                        <p class="hero-desc">${anime.synopsis || 'Loading description...'}</p>
+                        <div class="hero-btns">
+                            <a href="${anime.url}" target="_blank" class="btn btn-play">▶ Play</a>
+                            <a href="${anime.url}" target="_blank" class="btn btn-info">ⓘ More Info</a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // Initial Load
-        updatePersonalSections();
+        async function loadRow(endpoint, containerId) {
+            const container = document.getElementById(containerId);
+            const res = await fetchData(endpoint);
+            container.innerHTML = ''; // Clear skeletons
+            
+            res.data.forEach(anime => {
+                container.appendChild(createCard(anime));
+            });
+            // Buffer time to prevent Jikan 429 Error
+            await new Promise(r => setTimeout(r, 500));
+        }
+
+        function createCard(anime) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${anime.images.webp.image_url}" loading="lazy" alt="${anime.title}">
+                <div class="card-info">
+                    <h4>${anime.title}</h4>
+                    <div class="meta">
+                        <span>⭐ ${anime.score || 'N/A'}</span>
+                        <span>${anime.type}</span>
+                    </div>
+                </div>
+            `;
+            card.onclick = () => window.open(anime.url, '_blank');
+            return card;
+        }
+
+        // --- UI Logic ---
+
+        function setupEventListeners() {
+            const nav = document.getElementById('navbar');
+            const openMenu = document.getElementById('openMenu');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+
+            window.onscroll = () => {
+                if (window.scrollY > 50) nav.classList.add('scrolled');
+                else nav.classList.remove('scrolled');
+            };
+
+            openMenu.onclick = () => {
+                sidebar.classList.add('active');
+                overlay.style.display = 'block';
+            };
+
+            overlay.onclick = () => {
+                sidebar.classList.remove('active');
+                overlay.style.display = 'none';
+            };
+
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.onclick = async () => {
+                    const genreId = item.dataset.genre;
+                    const container = document.getElementById('trending-container');
+                    document.getElementById('trending-row').querySelector('.row-title').innerText = item.innerText + " Anime";
+                    container.innerHTML = '<div class="skeleton" style="width:200px; height:300px"></div>'.repeat(5);
+                    sidebar.classList.remove('active');
+                    overlay.style.display = 'none';
+                    await loadRow(`/anime?genres=${genreId}`, 'trending-container');
+                };
+            });
+        }
+
+        function startHeroTimer() {
+            setInterval(() => {
+                const slides = document.querySelectorAll('.slide');
+                slides[state.currentSlide].classList.remove('active');
+                state.currentSlide = (state.currentSlide + 1) % slides.length;
+                slides[state.currentSlide].classList.add('active');
+            }, 6000);
+        }
+
+        function showSkeletons() {
+            const containers = ['trending-container', 'popular-container', 'action-container'];
+            containers.forEach(id => {
+                const c = document.getElementById(id);
+                c.innerHTML = '<div class="card skeleton"></div>'.repeat(6);
+            });
+        }
+
+        init();
     </script>
 </body>
 </html>
