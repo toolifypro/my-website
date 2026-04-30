@@ -361,220 +361,189 @@
     <main class="content-area" id="mainContent">
         <!-- Rows will be injected here by JS -->
     </main>
+<!-- ONLY SCRIPT PART REPLACE KAR (safe + easy) -->
+<script>
+const App = (() => {
 
-    <script>
-        /* =========================================
-           SYSTEM ARCHITECTURE & LOGIC
-        ========================================= */
-        const App = (() => {
-            // Configuration
-            const API_BASE = 'https://api.jikan.moe/v4';
-            const REQUEST_DELAY = 400; // Delay to respect Jikan's strict 3 req/sec limit
-            
-            // State
-            let heroItems = [];
-            let currentHeroIndex = 0;
-            let heroInterval = null;
+    const API_BASE = 'https://api.jikan.moe/v4';
+    const REQUEST_DELAY = 400;
 
-            // DOM Elements
-            const DOM = {
-                navbar: document.getElementById('navbar'),
-                menuToggle: document.getElementById('menuToggle'),
-                sidebar: document.getElementById('sidebar'),
-                sidebarOverlay: document.getElementById('sidebarOverlay'),
-                mainContent: document.getElementById('mainContent'),
-                hero: {
-                    section: document.getElementById('hero'),
-                    content: document.getElementById('heroContent'),
-                    title: document.getElementById('heroTitle'),
-                    score: document.getElementById('heroScore'),
-                    year: document.getElementById('heroYear'),
-                    rating: document.getElementById('heroRating'),
-                    desc: document.getElementById('heroDesc'),
-                    playBtn: document.getElementById('heroPlay')
-                }
-            };
+    let heroItems = [];
+    let currentHeroIndex = 0;
+    let heroInterval = null;
 
-            /* --- 1. CORE UTILITIES --- */
-            
-            // Promise-based delay to handle API rate limiting smoothly
-            const delay = (ms) => new Promise(res => setTimeout(res, ms));
+    const DOM = {
+        navbar: document.getElementById('navbar'),
+        menuToggle: document.getElementById('menuToggle'),
+        sidebar: document.getElementById('sidebar'),
+        sidebarOverlay: document.getElementById('sidebarOverlay'),
+        mainContent: document.getElementById('mainContent'),
+        hero: {
+            section: document.getElementById('hero'),
+            content: document.getElementById('heroContent'),
+            title: document.getElementById('heroTitle'),
+            score: document.getElementById('heroScore'),
+            year: document.getElementById('heroYear'),
+            rating: document.getElementById('heroRating'),
+            desc: document.getElementById('heroDesc')
+        }
+    };
 
-            const fetchWithRetry = async (url, retries = 3) => {
-                try {
-                    const response = await fetch(url);
-                    if (response.status === 429) throw new Error('Rate Limited');
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    const data = await response.json();
-                    return data.data;
-                } catch (error) {
-                    if (retries > 0) {
-                        console.warn(`Retrying... (${retries} attempts left)`);
-                        await delay(1000);
-                        return fetchWithRetry(url, retries - 1);
-                    }
-                    console.error("API Error:", error);
-                    return [];
-                }
-            };
+    const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
-            /* --- 2. UI CONTROLLERS --- */
+    const fetchWithRetry = async (url, retries = 3) => {
+        try {
+            const res = await fetch(url);
+            if (res.status === 429) throw new Error('Rate Limit');
+            const data = await res.json();
+            return data.data;
+        } catch (e) {
+            if (retries > 0) {
+                await delay(1000);
+                return fetchWithRetry(url, retries - 1);
+            }
+            return [];
+        }
+    };
 
-            const handleScroll = () => {
-                if (window.scrollY > 50) DOM.navbar.classList.add('scrolled');
-                else DOM.navbar.classList.remove('scrolled');
-            };
+    const handleScroll = () => {
+        window.scrollY > 50
+            ? DOM.navbar.classList.add('scrolled')
+            : DOM.navbar.classList.remove('scrolled');
+    };
 
-            const toggleSidebar = () => {
-                const isActive = DOM.sidebar.classList.contains('active');
-                if (isActive) {
-                    DOM.sidebar.classList.remove('active');
-                    DOM.sidebarOverlay.classList.remove('active');
-                } else {
-                    DOM.sidebar.classList.add('active');
-                    DOM.sidebarOverlay.classList.add('active');
-                }
-            };
+    const toggleSidebar = () => {
+        DOM.sidebar.classList.toggle('active');
+        DOM.sidebarOverlay.classList.toggle('active');
+    };
 
-            /* --- 3. HERO BANNER LOGIC --- */
+    // 🔥 HERO UPDATE
+    const updateHeroDOM = (anime) => {
+        DOM.hero.content.style.opacity = 0;
 
-            const updateHeroDOM = (anime) => {
-                // Fade out content
-                DOM.hero.content.style.opacity = 0;
-                
-                setTimeout(() => {
-                    const imgUrl = anime.images.webp.large_image_url || 'https://via.placeholder.com/1920x1080?text=No+Image';
-                    DOM.hero.section.style.backgroundImage = `url(${imgUrl})`;
-                    
-                    // Remove skeleton classes
-                    DOM.hero.title.classList.remove('skeleton');
-                    DOM.hero.desc.classList.remove('skeleton');
-                    
-                    // Reset inline styles used for skeletons
-                    DOM.hero.title.style = "";
-                    DOM.hero.desc.style = "";
+        setTimeout(() => {
+            const img = anime.images?.webp?.large_image_url || anime.images?.jpg?.large_image_url;
+            DOM.hero.section.style.backgroundImage = `url(${img})`;
 
-                    DOM.hero.title.textContent = anime.title_english || anime.title;
-                    DOM.hero.score.textContent = anime.score ? `${Math.round(anime.score * 10)}% Match` : 'New';
-                    DOM.hero.year.textContent = anime.year || '2024';
-                    DOM.hero.rating.textContent = anime.rating ? anime.rating.split(' ')[0] : 'U/A';
-                    DOM.hero.desc.textContent = anime.synopsis ? anime.synopsis.split('[')[0] : 'No description available.';
-                    
-                    // Fade in content
-                    DOM.hero.content.style.opacity = 1;
-                }, 400); // Wait for fade out
-            };
+            DOM.hero.title.textContent = anime.title_english || anime.title;
+            DOM.hero.score.textContent = anime.score ? `${Math.round(anime.score * 10)}% Match` : 'New';
+            DOM.hero.year.textContent = anime.year || '2024';
+            DOM.hero.rating.textContent = anime.rating ? anime.rating.split(' ')[0] : 'U/A';
+            DOM.hero.desc.textContent = anime.synopsis?.slice(0, 150) || 'No description';
 
-            const cycleHero = () => {
-                if (heroItems.length === 0) return;
-                currentHeroIndex = (currentHeroIndex + 1) % Math.min(5, heroItems.length);
-                updateHeroDOM(heroItems[currentHeroIndex]);
-            };
+            DOM.hero.content.style.opacity = 1;
+        }, 300);
+    };
 
-            const initHero = (data) => {
-                heroItems = data.slice(0, 5); // Take top 5 for hero
-                if (heroItems.length > 0) {
-                    updateHeroDOM(heroItems[0]);
-                    if (heroInterval) clearInterval(heroInterval);
-                    heroInterval = setInterval(cycleHero, 7000); // Cycle every 7 seconds
-                }
-            };
+    const cycleHero = () => {
+        currentHeroIndex = (currentHeroIndex + 1) % heroItems.length;
+        updateHeroDOM(heroItems[currentHeroIndex]);
+    };
 
-            /* --- 4. ROW & CARD RENDERERS --- */
+    const initHero = (data) => {
+        heroItems = data.slice(0, 5);
+        updateHeroDOM(heroItems[0]);
 
-            const createCardHTML = (anime) => {
-                const title = anime.title_english || anime.title;
-                const img = anime.images.webp.large_image_url || 'https://via.placeholder.com/400x600?text=No+Image';
-                const score = anime.score ? `★ ${anime.score}` : 'N/A';
-                
-                // Note: In a full app, onClick would trigger the modal
-                return `
-                    <div class="card" onclick="console.log('Open modal for: ${title}')">
-                        <img src="${img}" alt="${title}" loading="lazy">
-                        <div class="card-overlay">
-                            <div class="card-title">${title}</div>
-                            <div class="card-stats">${score}</div>
-                        </div>
-                    </div>
-                `;
-            };
+        clearInterval(heroInterval);
+        heroInterval = setInterval(cycleHero, 5000); // 🔥 FIXED SPEED
+    };
 
-            const renderRow = (title, data) => {
-                if (!data || data.length === 0) return;
-                
-                const rowHTML = `
-                    <div class="row">
-                        <h2 class="row-title">${title}</h2>
-                        <div class="slider">
-                            ${data.map(anime => createCardHTML(anime)).join('')}
-                        </div>
-                    </div>
-                `;
-                DOM.mainContent.insertAdjacentHTML('beforeend', rowHTML);
-            };
+    // 🔥 CARD WITH FALLBACK IMAGE
+    const createCardHTML = (anime) => {
+        const title = anime.title_english || anime.title;
+        const img = anime.images?.webp?.large_image_url || anime.images?.jpg?.large_image_url;
+        const score = anime.score ? `★ ${anime.score}` : 'N/A';
 
-            /* --- 5. INITIALIZATION & DATA PIPELINE --- */
+        return `
+        <div class="card">
+            <img src="${img}" 
+                 onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(title)}&background=141414&color=E50914&size=400'">
+            <div class="card-overlay">
+                <div class="card-title">${title}</div>
+                <div class="card-stats">${score}</div>
+            </div>
+        </div>`;
+    };
 
-            const loadHomepageData = async () => {
-                // Generate skeleton rows while loading
-                const skeletonRow = `
-                    <div class="row">
-                        <h2 class="row-title skeleton" style="width:150px; height:24px; margin-bottom:15px; border-radius:4px;"></h2>
-                        <div class="slider">
-                            ${Array(8).fill('<div class="card skeleton"></div>').join('')}
-                        </div>
-                    </div>
-                `;
-                DOM.mainContent.innerHTML = skeletonRow.repeat(3);
+    const renderRow = (title, data) => {
+        if (!data?.length) return;
 
-                try {
-                    // Fetch sequentially with delay to avoid Rate Limits (HTTP 429)
-                    
-                    // 1. Trending (Powers Hero and first row)
-                    const trending = await fetchWithRetry(`${API_BASE}/top/anime?filter=bypopularity&limit=15`);
-                    initHero(trending);
-                    await delay(REQUEST_DELAY);
+        const html = `
+        <div class="row">
+            <h2 class="row-title">${title}</h2>
+            <div class="slider">
+                ${data.map(createCardHTML).join('')}
+            </div>
+        </div>`;
 
-                    // 2. Top Rated
-                    const topRated = await fetchWithRetry(`${API_BASE}/top/anime?filter=favorite&limit=15`);
-                    await delay(REQUEST_DELAY);
+        DOM.mainContent.insertAdjacentHTML('beforeend', html);
+    };
 
-                    // 3. Action Anime
-                    const action = await fetchWithRetry(`${API_BASE}/anime?genres=1&order_by=score&sort=desc&limit=15`);
-                    await delay(REQUEST_DELAY);
+    // 🔥 CATEGORY FILTER WORKING
+    const handleCategoryClick = async (genreId, name) => {
+        DOM.mainContent.innerHTML = "<h2 style='padding:40px'>Loading...</h2>";
 
-                    // 4. AOT / Dark Fantasy Vibe
-                    const aotFans = await fetchWithRetry(`${API_BASE}/anime?q=attack on titan&limit=10`);
+        const data = await fetchWithRetry(`${API_BASE}/anime?genres=${genreId}&limit=20`);
 
-                    // Clear skeletons and render real data
-                    DOM.mainContent.innerHTML = ''; 
-                    renderRow('🔥 Trending Now', trending.slice(5)); // Skip first 5 (used in hero)
-                    renderRow('🌟 Top Rated', topRated);
-                    renderRow('⚔️ Action Anime', action);
-                    renderRow('💀 Popular with AOT Fans', aotFans);
+        DOM.mainContent.innerHTML = "";
+        renderRow(`🎯 ${name}`, data);
 
-                } catch (error) {
-                    console.error("Failed to load application data", error);
-                    DOM.mainContent.innerHTML = '<h2 style="text-align:center; padding: 50px;">Unable to load data. Please refresh.</h2>';
-                }
-            };
+        toggleSidebar();
+    };
 
-            const setupEventListeners = () => {
-                window.addEventListener('scroll', handleScroll);
-                DOM.menuToggle.addEventListener('click', toggleSidebar);
-                DOM.sidebarOverlay.addEventListener('click', toggleSidebar);
-            };
+    // 🔥 MAIN LOAD
+    const loadHomepageData = async () => {
+        DOM.mainContent.innerHTML = "<h2 style='padding:40px'>Loading...</h2>";
 
-            return {
-                init: () => {
-                    setupEventListeners();
-                    loadHomepageData();
-                }
-            };
-        })();
+        const trending = await fetchWithRetry(`${API_BASE}/top/anime?filter=bypopularity&limit=15`);
+        initHero(trending);
+        await delay(REQUEST_DELAY);
 
-        // Boot App
-        document.addEventListener('DOMContentLoaded', App.init);
-    </script>
+        const topRated = await fetchWithRetry(`${API_BASE}/top/anime?filter=favorite&limit=15`);
+        await delay(REQUEST_DELAY);
+
+        const action = await fetchWithRetry(`${API_BASE}/anime?genres=1&limit=15`);
+        await delay(REQUEST_DELAY);
+
+        const romance = await fetchWithRetry(`${API_BASE}/anime?genres=22&limit=15`);
+        await delay(REQUEST_DELAY);
+
+        const comedy = await fetchWithRetry(`${API_BASE}/anime?genres=4&limit=15`);
+        await delay(REQUEST_DELAY);
+
+        const indiaPopular = await fetchWithRetry(`${API_BASE}/top/anime?filter=bypopularity&limit=10`);
+
+        DOM.mainContent.innerHTML = "";
+
+        renderRow("🔥 Trending Now", trending.slice(5));
+        renderRow("🌟 Top Rated", topRated);
+        renderRow("⚔️ Action", action);
+        renderRow("❤️ Romance", romance);
+        renderRow("😂 Comedy", comedy);
+        renderRow("🇮🇳 Popular in India", indiaPopular);
+    };
+
+    const setupEventListeners = () => {
+        window.addEventListener('scroll', handleScroll);
+        DOM.menuToggle.addEventListener('click', toggleSidebar);
+        DOM.sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        document.querySelectorAll('.sidebar-category').forEach(el => {
+            el.addEventListener('click', () => {
+                handleCategoryClick(el.dataset.genre, el.textContent);
+            });
+        });
+    };
+
+    return {
+        init: () => {
+            setupEventListeners();
+            loadHomepageData();
+        }
+    };
+})();
+
+document.addEventListener('DOMContentLoaded', App.init);
+</script>
 </body>
 </html>
